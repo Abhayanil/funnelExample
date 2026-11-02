@@ -1,0 +1,654 @@
+[
+  {
+    "id": "receiving_ben",
+    "phLabel": "Q1 · Current Benefits",
+    "dlKey": "PPR_receiving_ben",
+    "question": "Which of the following disability benefits are you currently receiving?",
+    "type": "single",
+    "options": [
+      {
+        "label": "Social Security Disability (SSD) Benefits",
+        "value": "Social Security Disability (SSD) Benefits",
+        "next": "page_sm72h5"
+      },
+      {
+        "label": "Supplemental Security Income (SSI) Benefits",
+        "value": "Supplemental Security Income (SSI) Benefits",
+        "next": "page_sm72h5"
+      },
+      {
+        "label": "Both SSD and SSI Benefits",
+        "value": "Both SSD and SSI Benefits",
+        "next": "page_sm72h5"
+      },
+      {
+        "label": "I am not receiving any disability benefits (SSD or SSI)",
+        "value": "I am not receiving any disability benefits (SSD or SSI)",
+        "next": "page_sm72h5"
+      }
+    ],
+    "defaultNext": "page_sm72h5",
+    "conditional": false
+  },
+  {
+    "id": "page_sm72h5",
+    "phLabel": "Q2 · Hours/Week",
+    "dlKey": "PPR_question_6kdqgg",
+    "question": "How many hours per week are you currently working?",
+    "type": "single",
+    "options": [
+      {
+        "label": "Not working",
+        "value": "Not working",
+        "next": "lastworked"
+      },
+      {
+        "label": "20 hours or less per week",
+        "value": "20 hours or less per week",
+        "next": "fiveyearwork"
+      },
+      {
+        "label": "More than 20 hours per week",
+        "value": "More than 20 hours per week",
+        "next": "fiveyearwork"
+      }
+    ],
+    "defaultNext": "fiveyearwork",
+    "conditional": true
+  },
+  {
+    "id": "lastworked",
+    "phLabel": "Q2b · Last Worked",
+    "dlKey": "PPR_lastWorked",
+    "question": "When did you last work?",
+    "type": "single",
+    "options": [
+      {
+        "label": "Within the last 4 months",
+        "value": "Within the last 4 months",
+        "next": "fiveyearwork"
+      },
+      {
+        "label": "4 to 7 months ago",
+        "value": "4 to 7 months ago",
+        "next": "fiveyearwork"
+      },
+      {
+        "label": "7 to 12 months ago",
+        "value": "7 to 12 months ago",
+        "next": "fiveyearwork"
+      },
+      {
+        "label": "More than 12 months ago",
+        "value": "More than 12 months ago",
+        "next": "fiveyearwork"
+      }
+    ],
+    "defaultNext": "fiveyearwork",
+    "conditional": false
+  },
+  {
+    "id": "fiveyearwork",
+    "phLabel": "Q3 · Years Employed",
+    "dlKey": "PPR_fiveyearwork",
+    "question": "In the past 10 years, how many years have you been employed?",
+    "type": "single",
+    "options": [
+      {
+        "label": "Less than 2 years",
+        "value": "Less than 2 years",
+        "next": "page_lyensr"
+      },
+      {
+        "label": "Between 2 and 4 years",
+        "value": "Between 2 and 4 years",
+        "next": "page_lyensr"
+      },
+      {
+        "label": "Between 4 and 6 years",
+        "value": "Between 4 and 6 years",
+        "next": "outofwork"
+      },
+      {
+        "label": "More than 6 years",
+        "value": "More than 6 years",
+        "next": "outofwork"
+      }
+    ],
+    "defaultNext": "page_lyensr",
+    "conditional": true
+  },
+  {
+    "id": "page_lyensr",
+    "phLabel": "Q4 · Assets",
+    "dlKey": "PPR_assets_new",
+    "question": "What is the total value of your assets? (Do not include house & car)",
+    "type": "single",
+    "options": [
+      {
+        "label": "Less than $2000",
+        "value": "Less than $2000",
+        "next": "outofwork"
+      },
+      {
+        "label": "More than $2000",
+        "value": "More than $2000",
+        "next": "outofwork"
+      },
+      {
+        "label": "Not Sure",
+        "value": "Not Sure",
+        "next": "outofwork"
+      }
+    ],
+    "defaultNext": "outofwork",
+    "conditional": false
+  },
+  {
+    "id": "outofwork",
+    "phLabel": "Q5 · Out of Work",
+    "dlKey": "PPR_outofwork",
+    "question": "Do you expect to be out of work for at least a year due to a disability?",
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "Yes",
+        "next": "visit"
+      },
+      {
+        "label": "No",
+        "value": "No",
+        "next": "visit"
+      }
+    ],
+    "defaultNext": "visit",
+    "conditional": true
+  },
+  {
+    "id": "conditionstart",
+    "phLabel": "Q5b · Condition Start",
+    "dlKey": "PPR_conditionStart",
+    "question": "When did your condition start keeping you from working? <em style=\"display:block;font-size:16px;font-weight:400;color:#6b7280;margin-top:4px\">An approximate date is fine. This is when your health started keeping you from working, not date of diagnosis.</em>",
+    "type": "single",
+    "options": [
+      {
+        "label": "Within the last 6 months",
+        "value": "Within the last 6 months",
+        "next": "visit"
+      },
+      {
+        "label": "6 to 12 months ago",
+        "value": "6 to 12 months ago",
+        "next": "visit"
+      },
+      {
+        "label": "More than 1 year ago",
+        "value": "More than 1 year ago",
+        "next": "visit"
+      },
+      {
+        "label": "I'm not sure",
+        "value": "I'm not sure",
+        "next": "visit"
+      }
+    ],
+    "defaultNext": "visit",
+    "conditional": false
+  },
+  {
+    "id": "visit",
+    "phLabel": "Q6 · Seeing Doctor",
+    "dlKey": "PPR_visit",
+    "question": "Are you currently seeing a doctor or taking prescribed medication for a disability?",
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "Yes",
+        "next": "page_igxwft"
+      },
+      {
+        "label": "No",
+        "value": "No",
+        "next": "page_zbkz5e"
+      }
+    ],
+    "defaultNext": "page_zbkz5e",
+    "conditional": true
+  },
+  {
+    "id": "page_zbkz5e",
+    "phLabel": "Q7 · Last Doctor Visit",
+    "dlKey": "PPR_visit_new",
+    "question": "When was the last time you visited a doctor?",
+    "type": "single",
+    "options": [
+      {
+        "label": "Within last 12 months",
+        "value": "Within last 12 months",
+        "next": "page_igxwft"
+      },
+      {
+        "label": "More than 12 months ago",
+        "value": "More than 12 months ago",
+        "next": "page_igxwft"
+      },
+      {
+        "label": "I haven't had one",
+        "value": "I haven't had one",
+        "next": "page_igxwft"
+      }
+    ],
+    "defaultNext": "page_igxwft",
+    "conditional": false
+  },
+  {
+    "id": "page_igxwft",
+    "phLabel": "Q8 · Pending App",
+    "dlKey": "PPR_pendingApl",
+    "question": "Do you have a pending application for Social Security Disability (SSD) benefits?",
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "Yes",
+        "next": "attorney"
+      },
+      {
+        "label": "No",
+        "value": "No",
+        "next": "page_1kwm6b"
+      }
+    ],
+    "defaultNext": "attorney",
+    "conditional": true
+  },
+  {
+    "id": "attorney",
+    "phLabel": "Q9 · Has Attorney",
+    "dlKey": "PPR_atty",
+    "question": "Is an attorney or advocate currently representing you for this SSD application?",
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "Yes",
+        "next": "attorneyfirm"
+      },
+      {
+        "label": "No",
+        "value": "No",
+        "next": "page_9rrpa3"
+      }
+    ],
+    "defaultNext": "page_9rrpa3",
+    "conditional": true
+  },
+  {
+    "id": "attorneyfirm",
+    "phLabel": "Q9b · Attorney Firm",
+    "dlKey": "PPR_atty_firm",
+    "question": "Which firm is currently helping you with your disability application?",
+    "type": "single",
+    "options": [
+      {
+        "label": "Trajector Disability",
+        "value": "Trajector Disability",
+        "next": "page_9rrpa3"
+      },
+      {
+        "label": "Premier Disability",
+        "value": "Premier Disability",
+        "next": "page_9rrpa3"
+      },
+      {
+        "label": "Citizens Disability",
+        "value": "Citizens Disability",
+        "next": "page_9rrpa3"
+      },
+      {
+        "label": "Nyman Turkish PC",
+        "value": "Nyman Turkish PC",
+        "next": "page_9rrpa3"
+      },
+      {
+        "label": "Allsup",
+        "value": "Allsup",
+        "next": "page_9rrpa3"
+      },
+      {
+        "label": "Quikaid",
+        "value": "Quikaid",
+        "next": "page_9rrpa3"
+      },
+      {
+        "label": "Kirkendall Dwyer LLP",
+        "value": "Kirkendall Dwyer LLP",
+        "next": "page_9rrpa3"
+      },
+      {
+        "label": "Newlin Disability",
+        "value": "Newlin Disability",
+        "next": "page_9rrpa3"
+      },
+      {
+        "label": "Other / None of the above",
+        "value": "Other / None of the above",
+        "next": "page_9rrpa3"
+      }
+    ],
+    "defaultNext": "page_9rrpa3",
+    "conditional": false
+  },
+  {
+    "id": "page_9rrpa3",
+    "phLabel": "Q10 · App Denied",
+    "dlKey": "application_denied",
+    "question": "Was your Disability application denied?",
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "Yes",
+        "next": "page_sozf2w"
+      },
+      {
+        "label": "No",
+        "value": "No",
+        "next": "page_1kwm6b"
+      }
+    ],
+    "defaultNext": "page_sozf2w",
+    "conditional": true
+  },
+  {
+    "id": "page_sozf2w",
+    "phLabel": "Q11 · Claim Stage",
+    "dlKey": "appeal_filed",
+    "question": "Where are you in the process?",
+    "type": "single",
+    "options": [
+      {
+        "label": "Waiting on first decision",
+        "value": "Waiting on first decision",
+        "next": "page_ddujlp"
+      },
+      {
+        "label": "First decision was denied",
+        "value": "First decision was denied",
+        "next": "page_denialage"
+      },
+      {
+        "label": "I requested reconsideration",
+        "value": "I requested reconsideration",
+        "next": "page_reconstatus"
+      },
+      {
+        "label": "I requested a hearing",
+        "value": "I requested a hearing",
+        "next": "page_doic6e"
+      }
+    ],
+    "defaultNext": "page_1kwm6b",
+    "conditional": true
+  },
+  {
+    "id": "page_reconstatus",
+    "phLabel": "Q11c · Reconsideration Status",
+    "dlKey": "reconsideration_status",
+    "question": "What's the status of your reconsideration?",
+    "type": "single",
+    "options": [
+      {
+        "label": "Got denied",
+        "value": "Got denied",
+        "next": "page_denialage"
+      },
+      {
+        "label": "Pending",
+        "value": "Pending",
+        "next": "page_ddujlp"
+      }
+    ],
+    "defaultNext": "page_ddujlp",
+    "conditional": true
+  },
+  {
+    "id": "page_denialage",
+    "phLabel": "Q11b · Denial Age",
+    "dlKey": "denial_age",
+    "question": "About how long ago did you get the denial?",
+    "type": "single",
+    "options": [
+      {
+        "label": "Less than 45 days ago",
+        "value": "Less than 45 days ago",
+        "next": "page_1kwm6b"
+      },
+      {
+        "label": "More than 45 days ago",
+        "value": "More than 45 days ago",
+        "next": "page_1kwm6b"
+      }
+    ],
+    "defaultNext": "page_1kwm6b",
+    "conditional": true
+  },
+  {
+    "id": "page_doic6e",
+    "phLabel": "Q12 · Hearing Status",
+    "dlKey": "hearing_status",
+    "question": "What's the current status of your hearing?",
+    "type": "single",
+    "options": [
+      {
+        "label": "Waiting to be scheduled",
+        "value": "Waiting to be scheduled",
+        "next": "page_ddujlp"
+      },
+      {
+        "label": "A hearing is scheduled",
+        "value": "A hearing is scheduled",
+        "next": "page_6dkfid"
+      },
+      {
+        "label": "Hearing already happened - waiting on a decision",
+        "value": "Hearing already happened - waiting on a decision",
+        "next": "page_ddujlp"
+      }
+    ],
+    "defaultNext": "page_ddujlp",
+    "conditional": true
+  },
+  {
+    "id": "page_ddujlp",
+    "phLabel": "Q13 · Wait Period",
+    "dlKey": "waiting_period",
+    "question": "How long you've been waiting ?",
+    "type": "single",
+    "options": [
+      {
+        "label": "Less than 3 Months",
+        "value": "Less than 3 Months",
+        "next": "page_1kwm6b"
+      },
+      {
+        "label": "3 – 6 Months",
+        "value": "3 – 6 Months",
+        "next": "page_1kwm6b"
+      },
+      {
+        "label": "6 – 9 Months",
+        "value": "6 – 9 Months",
+        "next": "page_1kwm6b"
+      },
+      {
+        "label": "More than 9 Months",
+        "value": "More than 9 Months",
+        "next": "page_1kwm6b"
+      }
+    ],
+    "defaultNext": "page_1kwm6b",
+    "conditional": true
+  },
+  {
+    "id": "page_6dkfid",
+    "phLabel": "Q14 · Hearing Month",
+    "dlKey": "PPR_hearingScheduled",
+    "question": "In which month is your hearing scheduled?",
+    "type": "single",
+    "options": [
+      {
+        "label": "May",
+        "value": "May",
+        "next": "page_1kwm6b"
+      },
+      {
+        "label": "June",
+        "value": "June",
+        "next": "page_1kwm6b"
+      },
+      {
+        "label": "July",
+        "value": "July",
+        "next": "page_1kwm6b"
+      },
+      {
+        "label": "August",
+        "value": "August",
+        "next": "page_1kwm6b"
+      },
+      {
+        "label": "September",
+        "value": "September",
+        "next": "page_1kwm6b"
+      },
+      {
+        "label": "October",
+        "value": "October",
+        "next": "page_1kwm6b"
+      },
+      {
+        "label": "November",
+        "value": "November",
+        "next": "page_1kwm6b"
+      },
+      {
+        "label": "December",
+        "value": "December",
+        "next": "page_1kwm6b"
+      },
+      {
+        "label": "Next year (2027)",
+        "value": "Next year (2027)",
+        "next": "page_1kwm6b"
+      }
+    ],
+    "defaultNext": "page_1kwm6b",
+    "conditional": false
+  },
+  {
+    "id": "page_1kwm6b",
+    "phLabel": "Q15 · Gender",
+    "dlKey": "PPR_optin_gender",
+    "question": "How do you identify your gender?",
+    "type": "single",
+    "options": [
+      {
+        "label": "Male",
+        "value": "Male",
+        "next": "page_uhs14w"
+      },
+      {
+        "label": "Female",
+        "value": "Female",
+        "next": "page_uhs14w"
+      },
+      {
+        "label": "Non - Binary",
+        "value": "Non - Binary",
+        "next": "page_uhs14w"
+      },
+      {
+        "label": "Prefer not to respond",
+        "value": "Prefer not to respond",
+        "next": "page_uhs14w"
+      }
+    ],
+    "defaultNext": "page_uhs14w",
+    "conditional": false
+  },
+  {
+    "id": "page_uhs14w",
+    "phLabel": "Q16 · Age Range",
+    "dlKey": "PPR_optin_age",
+    "question": "Please select the option below that represents your age range",
+    "type": "single",
+    "options": [
+      {
+        "label": "Under 40",
+        "value": "Under 40",
+        "next": "page_8w2qbu"
+      },
+      {
+        "label": "40-49",
+        "value": "40-49",
+        "next": "page_8w2qbu"
+      },
+      {
+        "label": "50-54",
+        "value": "50-54",
+        "next": "page_8w2qbu"
+      },
+      {
+        "label": "55-63",
+        "value": "55-63",
+        "next": "page_8w2qbu"
+      },
+      {
+        "label": "64 or older",
+        "value": "64 or older",
+        "next": "page_8w2qbu"
+      }
+    ],
+    "defaultNext": "page_8w2qbu",
+    "conditional": false
+  },
+  {
+    "id": "page_8w2qbu",
+    "phLabel": "Q17 · Marital Status",
+    "dlKey": "PPR_maritalStatus_new",
+    "question": "What is your current marital status?",
+    "type": "single",
+    "options": [
+      {
+        "label": "Single",
+        "value": "Single",
+        "next": "email"
+      },
+      {
+        "label": "Married",
+        "value": "Married",
+        "next": "email"
+      },
+      {
+        "label": "Widowed",
+        "value": "Widowed",
+        "next": "email"
+      },
+      {
+        "label": "Divorced",
+        "value": "Divorced",
+        "next": "email"
+      },
+      {
+        "label": "Separated (Not receiving support)",
+        "value": "Separated (Not receiving support)",
+        "next": "email"
+      }
+    ],
+    "defaultNext": "email",
+    "conditional": false
+  }
+]

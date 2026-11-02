@@ -1,0 +1,38 @@
+{
+  "name": "lexhive",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3100",
+    "build": "next build",
+    "start": "next start -p 3100",
+    "typecheck": "tsc --noEmit",
+    "test": "playwright test",
+    "test:e2e": "playwright test tests/funnel.spec.ts tests/telemetry.spec.ts tests/dashboard.spec.ts",
+    "crawl": "node scripts/crawl_funnel.js",
+    "graph:build": "node scripts/build-funnel-graph.js",
+    "map:extract": "node scripts/extract_definition.js",
+    "map:verify": "node scripts/reconcile.js",
+    "dlq:replay": "node scripts/dlq-replay.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hookform/resolvers": "^7.0.1",
+    "@supabase/supabase-js": "^2.118.0",
+    "framer-motion": "^14.9.0",
+    "next": "^16.4.3",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-hook-form": "^7.91.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^7.0.2"
+  }
+}

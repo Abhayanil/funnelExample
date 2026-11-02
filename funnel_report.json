@@ -1,0 +1,1512 @@
+{
+  "crawledAt": "2026-11-01T15:11:24.010Z",
+  "target": "https://funnel.disabilitypath.org/qualification-v30",
+  "stats": {
+    "questions": 22,
+    "answerOptions": 84,
+    "optionsPerQuestion": {
+      "start": 2,
+      "receiving_ben": 4,
+      "page_sm72h5": 3,
+      "lastworked": 4,
+      "fiveyearwork": 4,
+      "page_lyensr": 3,
+      "outofwork": 2,
+      "visit": 2,
+      "page_igxwft": 2,
+      "page_zbkz5e": 3,
+      "attorney": 2,
+      "page_1kwm6b": 4,
+      "attorneyfirm": 9,
+      "page_9rrpa3": 2,
+      "page_uhs14w": 5,
+      "page_sozf2w": 4,
+      "page_8w2qbu": 5,
+      "page_ddujlp": 4,
+      "page_denialage": 2,
+      "page_reconstatus": 2,
+      "page_doic6e": 3,
+      "page_6dkfid": 9,
+      "conditionstart": 4,
+      "email": 2,
+      "contact": 1,
+      "result": 0
+    },
+    "terminalPages": 3,
+    "screenshots": 26,
+    "conditionalEdges": 1
+  },
+  "nodes": [
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30",
+      "phase": "start",
+      "headline": "Over 50 and Unemployed?",
+      "question": "Are You 40 Years or Older?",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "YES"
+        },
+        {
+          "index": 1,
+          "text": "NO"
+        }
+      ],
+      "fields": [],
+      "id": "start",
+      "step": 1,
+      "screenshot": "funnel_shots/01_start.png",
+      "pageTextPreview": "DP Disability Path Over 50 and Unemployed? You may be eligible for up to $4,152 every month in disability benefits Answer below to see if you qualify Are You 40 Years or Older? YES NO Disclaimer Disability Path is a private entity and is not affiliated with, endorsed by, or associated with the U.S. government or the Social Security Administration (SSA). We operate independently to connect individu"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/receiving_ben",
+      "phase": "question",
+      "headline": "",
+      "question": "Which of the following disability benefits are you currently receiving?",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "Social Security Disability (SSD) Benefits"
+        },
+        {
+          "index": 1,
+          "text": "Supplemental Security Income (SSI) Benefits"
+        },
+        {
+          "index": 2,
+          "text": "Both SSD and SSI Benefits"
+        },
+        {
+          "index": 3,
+          "text": "I am not receiving any disability benefits (SSD or SSI)"
+        }
+      ],
+      "fields": [],
+      "id": "receiving_ben",
+      "step": 2,
+      "screenshot": "funnel_shots/02_receiving_ben.png",
+      "pageTextPreview": "DP Disability Path Which of the following disability benefits are you currently receiving? Social Security Disability (SSD) Benefits Supplemental Security Income (SSI) Benefits Both SSD and SSI Benefits I am not receiving any disability benefits (SSD or SSI) Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/page_sm72h5",
+      "phase": "question",
+      "headline": "",
+      "question": "How many hours per week are you currently working?",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "Not working"
+        },
+        {
+          "index": 1,
+          "text": "20 hours or less per week"
+        },
+        {
+          "index": 2,
+          "text": "More than 20 hours per week"
+        }
+      ],
+      "fields": [],
+      "id": "page_sm72h5",
+      "step": 3,
+      "screenshot": "funnel_shots/03_page_sm72h5.png",
+      "pageTextPreview": "DP Disability Path How many hours per week are you currently working? Not working 20 hours or less per week More than 20 hours per week Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/lastworked",
+      "phase": "question",
+      "headline": "",
+      "question": "When did you last work?",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "Within the last 4 months"
+        },
+        {
+          "index": 1,
+          "text": "4 to 7 months ago"
+        },
+        {
+          "index": 2,
+          "text": "7 to 12 months ago"
+        },
+        {
+          "index": 3,
+          "text": "More than 12 months ago"
+        }
+      ],
+      "fields": [],
+      "id": "lastworked",
+      "step": 4,
+      "screenshot": "funnel_shots/04_lastworked.png",
+      "pageTextPreview": "DP Disability Path When did you last work? Within the last 4 months 4 to 7 months ago 7 to 12 months ago More than 12 months ago Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/fiveyearwork",
+      "phase": "question",
+      "headline": "",
+      "question": "In the past 10 years, how many years have you been employed?",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "Less than 2 years"
+        },
+        {
+          "index": 1,
+          "text": "Between 2 and 4 years"
+        },
+        {
+          "index": 2,
+          "text": "Between 4 and 6 years"
+        },
+        {
+          "index": 3,
+          "text": "More than 6 years"
+        }
+      ],
+      "fields": [],
+      "id": "fiveyearwork",
+      "step": 5,
+      "screenshot": "funnel_shots/05_fiveyearwork.png",
+      "pageTextPreview": "DP Disability Path In the past 10 years, how many years have you been employed? Less than 2 years Between 2 and 4 years Between 4 and 6 years More than 6 years Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/page_lyensr",
+      "phase": "question",
+      "headline": "",
+      "question": "What is the total value of your assets? (Do not include house & car)",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "Less than $2000"
+        },
+        {
+          "index": 1,
+          "text": "More than $2000"
+        },
+        {
+          "index": 2,
+          "text": "Not Sure"
+        }
+      ],
+      "fields": [],
+      "id": "page_lyensr",
+      "step": 6,
+      "screenshot": "funnel_shots/06_page_lyensr.png",
+      "pageTextPreview": "DP Disability Path What is the total value of your assets? (Do not include house & car) Less than $2000 More than $2000 Not Sure Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/outofwork",
+      "phase": "question",
+      "headline": "",
+      "question": "Do you expect to be out of work for at least a year due to a disability?",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "YES"
+        },
+        {
+          "index": 1,
+          "text": "NO"
+        }
+      ],
+      "fields": [],
+      "id": "outofwork",
+      "step": 7,
+      "screenshot": "funnel_shots/07_outofwork.png",
+      "pageTextPreview": "DP Disability Path Do you expect to be out of work for at least a year due to a disability? YES NO Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/visit",
+      "phase": "question",
+      "headline": "",
+      "question": "Are you currently seeing a doctor or taking prescribed medication for a disability?",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "YES"
+        },
+        {
+          "index": 1,
+          "text": "NO"
+        }
+      ],
+      "fields": [],
+      "id": "visit",
+      "step": 8,
+      "screenshot": "funnel_shots/08_visit.png",
+      "pageTextPreview": "DP Disability Path Are you currently seeing a doctor or taking prescribed medication for a disability? YES NO Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/page_igxwft",
+      "phase": "question",
+      "headline": "",
+      "question": "Do you have a pending application for Social Security Disability (SSD) benefits?",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "YES"
+        },
+        {
+          "index": 1,
+          "text": "NO"
+        }
+      ],
+      "fields": [],
+      "id": "page_igxwft",
+      "step": 9,
+      "screenshot": "funnel_shots/09_page_igxwft.png",
+      "pageTextPreview": "DP Disability Path Do you have a pending application for Social Security Disability (SSD) benefits? YES NO Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/page_zbkz5e",
+      "phase": "question",
+      "headline": "",
+      "question": "When was the last time you visited a doctor?",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "Within last 12 months"
+        },
+        {
+          "index": 1,
+          "text": "More than 12 months ago"
+        },
+        {
+          "index": 2,
+          "text": "I haven't had one"
+        }
+      ],
+      "fields": [],
+      "id": "page_zbkz5e",
+      "step": 10,
+      "screenshot": "funnel_shots/10_page_zbkz5e.png",
+      "pageTextPreview": "DP Disability Path When was the last time you visited a doctor? Within last 12 months More than 12 months ago I haven't had one Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/attorney",
+      "phase": "question",
+      "headline": "",
+      "question": "Is an attorney or advocate currently representing you for this SSD application?",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "YES"
+        },
+        {
+          "index": 1,
+          "text": "NO"
+        }
+      ],
+      "fields": [],
+      "id": "attorney",
+      "step": 11,
+      "screenshot": "funnel_shots/11_attorney.png",
+      "pageTextPreview": "DP Disability Path Is an attorney or advocate currently representing you for this SSD application? YES NO Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/page_1kwm6b",
+      "phase": "question",
+      "headline": "",
+      "question": "How do you identify your gender?",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "Male"
+        },
+        {
+          "index": 1,
+          "text": "Female"
+        },
+        {
+          "index": 2,
+          "text": "Non - Binary"
+        },
+        {
+          "index": 3,
+          "text": "Prefer not to respond"
+        }
+      ],
+      "fields": [],
+      "id": "page_1kwm6b",
+      "step": 12,
+      "screenshot": "funnel_shots/12_page_1kwm6b.png",
+      "pageTextPreview": "DP Disability Path How do you identify your gender? Male Female Non - Binary Prefer not to respond Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/attorneyfirm",
+      "phase": "question",
+      "headline": "",
+      "question": "Which firm is currently helping you with your disability application?",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "Trajector Disability"
+        },
+        {
+          "index": 1,
+          "text": "Premier Disability"
+        },
+        {
+          "index": 2,
+          "text": "Citizens Disability"
+        },
+        {
+          "index": 3,
+          "text": "Nyman Turkish PC"
+        },
+        {
+          "index": 4,
+          "text": "Allsup"
+        },
+        {
+          "index": 5,
+          "text": "Quikaid"
+        },
+        {
+          "index": 6,
+          "text": "Kirkendall Dwyer LLP"
+        },
+        {
+          "index": 7,
+          "text": "Newlin Disability"
+        },
+        {
+          "index": 8,
+          "text": "Other / None of the above"
+        }
+      ],
+      "fields": [],
+      "id": "attorneyfirm",
+      "step": 13,
+      "screenshot": "funnel_shots/13_attorneyfirm.png",
+      "pageTextPreview": "DP Disability Path Which firm is currently helping you with your disability application? Trajector Disability Premier Disability Citizens Disability Nyman Turkish PC Allsup Quikaid Kirkendall Dwyer LLP Newlin Disability Other / None of the above Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/page_9rrpa3",
+      "phase": "question",
+      "headline": "",
+      "question": "Was your Disability application denied?",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "YES"
+        },
+        {
+          "index": 1,
+          "text": "NO"
+        }
+      ],
+      "fields": [],
+      "id": "page_9rrpa3",
+      "step": 14,
+      "screenshot": "funnel_shots/14_page_9rrpa3.png",
+      "pageTextPreview": "DP Disability Path Was your Disability application denied? YES NO Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/page_uhs14w",
+      "phase": "question",
+      "headline": "",
+      "question": "Please select the option below that represents your age range",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "Under 40"
+        },
+        {
+          "index": 1,
+          "text": "40-49"
+        },
+        {
+          "index": 2,
+          "text": "50-54"
+        },
+        {
+          "index": 3,
+          "text": "55-63"
+        },
+        {
+          "index": 4,
+          "text": "64 or older"
+        }
+      ],
+      "fields": [],
+      "id": "page_uhs14w",
+      "step": 15,
+      "screenshot": "funnel_shots/15_page_uhs14w.png",
+      "pageTextPreview": "DP Disability Path Please select the option below that represents your age range Under 40 40-49 50-54 55-63 64 or older Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/page_sozf2w",
+      "phase": "question",
+      "headline": "",
+      "question": "Where are you in the process?",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "Waiting on first decision"
+        },
+        {
+          "index": 1,
+          "text": "First decision was denied"
+        },
+        {
+          "index": 2,
+          "text": "I requested reconsideration"
+        },
+        {
+          "index": 3,
+          "text": "I requested a hearing"
+        }
+      ],
+      "fields": [],
+      "id": "page_sozf2w",
+      "step": 16,
+      "screenshot": "funnel_shots/16_page_sozf2w.png",
+      "pageTextPreview": "DP Disability Path Where are you in the process? Waiting on first decision First decision was denied I requested reconsideration I requested a hearing Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/page_8w2qbu",
+      "phase": "question",
+      "headline": "",
+      "question": "What is your current marital status?",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "Single"
+        },
+        {
+          "index": 1,
+          "text": "Married"
+        },
+        {
+          "index": 2,
+          "text": "Widowed"
+        },
+        {
+          "index": 3,
+          "text": "Divorced"
+        },
+        {
+          "index": 4,
+          "text": "Separated (Not receiving support)"
+        }
+      ],
+      "fields": [],
+      "id": "page_8w2qbu",
+      "step": 17,
+      "screenshot": "funnel_shots/17_page_8w2qbu.png",
+      "pageTextPreview": "DP Disability Path What is your current marital status? Single Married Widowed Divorced Separated (Not receiving support) Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/page_ddujlp",
+      "phase": "question",
+      "headline": "",
+      "question": "How long you've been waiting ?",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "Less than 3 Months"
+        },
+        {
+          "index": 1,
+          "text": "3 – 6 Months"
+        },
+        {
+          "index": 2,
+          "text": "6 – 9 Months"
+        },
+        {
+          "index": 3,
+          "text": "More than 9 Months"
+        }
+      ],
+      "fields": [],
+      "id": "page_ddujlp",
+      "step": 18,
+      "screenshot": "funnel_shots/18_page_ddujlp.png",
+      "pageTextPreview": "DP Disability Path How long you've been waiting ? Less than 3 Months 3 – 6 Months 6 – 9 Months More than 9 Months Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/page_denialage",
+      "phase": "question",
+      "headline": "",
+      "question": "About how long ago did you get the denial?",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "Less than 45 days ago"
+        },
+        {
+          "index": 1,
+          "text": "More than 45 days ago"
+        }
+      ],
+      "fields": [],
+      "id": "page_denialage",
+      "step": 19,
+      "screenshot": "funnel_shots/19_page_denialage.png",
+      "pageTextPreview": "DP Disability Path About how long ago did you get the denial? Less than 45 days ago More than 45 days ago Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/page_reconstatus",
+      "phase": "question",
+      "headline": "",
+      "question": "What's the status of your reconsideration?",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "Got denied"
+        },
+        {
+          "index": 1,
+          "text": "Pending"
+        }
+      ],
+      "fields": [],
+      "id": "page_reconstatus",
+      "step": 20,
+      "screenshot": "funnel_shots/20_page_reconstatus.png",
+      "pageTextPreview": "DP Disability Path What's the status of your reconsideration? Got denied Pending Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/page_doic6e",
+      "phase": "question",
+      "headline": "",
+      "question": "What's the current status of your hearing?",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "Waiting to be scheduled"
+        },
+        {
+          "index": 1,
+          "text": "A hearing is scheduled"
+        },
+        {
+          "index": 2,
+          "text": "Hearing already happened - waiting on a decision"
+        }
+      ],
+      "fields": [],
+      "id": "page_doic6e",
+      "step": 21,
+      "screenshot": "funnel_shots/21_page_doic6e.png",
+      "pageTextPreview": "DP Disability Path What's the current status of your hearing? Waiting to be scheduled A hearing is scheduled Hearing already happened - waiting on a decision Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/page_6dkfid",
+      "phase": "question",
+      "headline": "",
+      "question": "In which month is your hearing scheduled?",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "May"
+        },
+        {
+          "index": 1,
+          "text": "June"
+        },
+        {
+          "index": 2,
+          "text": "July"
+        },
+        {
+          "index": 3,
+          "text": "August"
+        },
+        {
+          "index": 4,
+          "text": "September"
+        },
+        {
+          "index": 5,
+          "text": "October"
+        },
+        {
+          "index": 6,
+          "text": "November"
+        },
+        {
+          "index": 7,
+          "text": "December"
+        },
+        {
+          "index": 8,
+          "text": "Next year (2027)"
+        }
+      ],
+      "fields": [],
+      "id": "page_6dkfid",
+      "step": 22,
+      "screenshot": "funnel_shots/22_page_6dkfid.png",
+      "pageTextPreview": "DP Disability Path In which month is your hearing scheduled? May June July August September October November December Next year (2027) Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/conditionstart",
+      "phase": "question",
+      "headline": "",
+      "question": "When did your condition start keeping you from working? An approximate date is fine. This is when your health started keeping you from working, not date of diagnosis.",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "Within the last 6 months"
+        },
+        {
+          "index": 1,
+          "text": "6 to 12 months ago"
+        },
+        {
+          "index": 2,
+          "text": "More than 1 year ago"
+        },
+        {
+          "index": 3,
+          "text": "I'm not sure"
+        }
+      ],
+      "fields": [],
+      "id": "conditionstart",
+      "step": 23,
+      "screenshot": "funnel_shots/23_conditionstart.png",
+      "pageTextPreview": "DP Disability Path When did your condition start keeping you from working? An approximate date is fine. This is when your health started keeping you from working, not date of diagnosis. Within the last 6 months 6 to 12 months ago More than 1 year ago I'm not sure Terms·Privacy policy"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/email",
+      "phase": "email",
+      "headline": "",
+      "question": "You're Pre-Qualified for Up to $4,152/Month!",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "Send My Results"
+        },
+        {
+          "index": 1,
+          "text": "Send My Results"
+        }
+      ],
+      "fields": [
+        {
+          "tag": "INPUT",
+          "type": "email",
+          "name": "email",
+          "placeholder": "Your email address"
+        }
+      ],
+      "id": "email",
+      "step": 24,
+      "screenshot": "funnel_shots/24_email.png",
+      "pageTextPreview": "DP Disability Path You're Pre-Qualified for Up to $4,152/Month! Enter your email to get your results now! Where should we send them? Send My Results *Not available to California residents *Maximum possible benefit per SSA. Individual amounts vary. Terms·Privacy policy Send My Results"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/contact",
+      "phase": "contact",
+      "headline": "",
+      "question": "Final step: Enter your contact info to see how much you qualify for",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "See What I Am Eligible For 👉"
+        }
+      ],
+      "fields": [
+        {
+          "tag": "INPUT",
+          "type": "text",
+          "name": "fname",
+          "placeholder": "Your first name"
+        },
+        {
+          "tag": "INPUT",
+          "type": "text",
+          "name": "lname",
+          "placeholder": "Your last name"
+        },
+        {
+          "tag": "INPUT",
+          "type": "tel",
+          "name": "phone",
+          "placeholder": "Your mobile number"
+        }
+      ],
+      "id": "contact",
+      "step": 25,
+      "screenshot": "funnel_shots/25_contact.png",
+      "pageTextPreview": "DP Disability Path Final step: Enter your contact info to see how much you qualify for 🇺🇸 See What I Am Eligible For 👉 By clicking 'Continue', I am providing my ESIGN signature and express written consent to Disability Path and disability firms and partners to contact me via calls and SMS using automated technology. I agree to Disability Path's privacy policy and terms."
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/result",
+      "phase": "result",
+      "headline": "Last step: a quick 5-minute call.",
+      "question": "Thank You for Your Time",
+      "buttons": [],
+      "fields": [],
+      "id": "result",
+      "step": 26,
+      "screenshot": "funnel_shots/26_result.png",
+      "pageTextPreview": "You may qualify for up to $4,152/month* in benefits 15% Reviewing your responses 256-bit encrypted • Your data is never shared"
+    }
+  ],
+  "edges": [
+    {
+      "from": "start",
+      "option": "YES",
+      "optionIndex": 0,
+      "to": "receiving_ben",
+      "toQuestion": "Which of the following disability benefits are you currently receiving?"
+    },
+    {
+      "from": "start",
+      "option": "NO",
+      "optionIndex": 1,
+      "to": "receiving_ben",
+      "toQuestion": "Which of the following disability benefits are you currently receiving?"
+    },
+    {
+      "from": "receiving_ben",
+      "option": "Social Security Disability (SSD) Benefits",
+      "optionIndex": 0,
+      "to": "page_sm72h5",
+      "toQuestion": "How many hours per week are you currently working?",
+      "urlChanged": true
+    },
+    {
+      "from": "receiving_ben",
+      "option": "Supplemental Security Income (SSI) Benefits",
+      "optionIndex": 1,
+      "to": "page_sm72h5",
+      "toQuestion": "How many hours per week are you currently working?",
+      "urlChanged": true
+    },
+    {
+      "from": "receiving_ben",
+      "option": "Both SSD and SSI Benefits",
+      "optionIndex": 2,
+      "to": "page_sm72h5",
+      "toQuestion": "How many hours per week are you currently working?",
+      "urlChanged": true
+    },
+    {
+      "from": "receiving_ben",
+      "option": "I am not receiving any disability benefits (SSD or SSI)",
+      "optionIndex": 3,
+      "to": "page_sm72h5",
+      "toQuestion": "How many hours per week are you currently working?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_sm72h5",
+      "option": "Not working",
+      "optionIndex": 0,
+      "to": "lastworked",
+      "toQuestion": "When did you last work?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_sm72h5",
+      "option": "20 hours or less per week",
+      "optionIndex": 1,
+      "to": "fiveyearwork",
+      "toQuestion": "In the past 10 years, how many years have you been employed?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_sm72h5",
+      "option": "More than 20 hours per week",
+      "optionIndex": 2,
+      "to": "fiveyearwork",
+      "toQuestion": "In the past 10 years, how many years have you been employed?",
+      "urlChanged": true
+    },
+    {
+      "from": "lastworked",
+      "option": "Within the last 4 months",
+      "optionIndex": 0,
+      "to": "fiveyearwork",
+      "toQuestion": "In the past 10 years, how many years have you been employed?",
+      "urlChanged": true
+    },
+    {
+      "from": "lastworked",
+      "option": "4 to 7 months ago",
+      "optionIndex": 1,
+      "to": "fiveyearwork",
+      "toQuestion": "In the past 10 years, how many years have you been employed?",
+      "urlChanged": true
+    },
+    {
+      "from": "lastworked",
+      "option": "7 to 12 months ago",
+      "optionIndex": 2,
+      "to": "fiveyearwork",
+      "toQuestion": "In the past 10 years, how many years have you been employed?",
+      "urlChanged": true
+    },
+    {
+      "from": "lastworked",
+      "option": "More than 12 months ago",
+      "optionIndex": 3,
+      "to": "fiveyearwork",
+      "toQuestion": "In the past 10 years, how many years have you been employed?",
+      "urlChanged": true
+    },
+    {
+      "from": "fiveyearwork",
+      "option": "Less than 2 years",
+      "optionIndex": 0,
+      "to": "page_lyensr",
+      "toQuestion": "What is the total value of your assets? (Do not include house & car)",
+      "urlChanged": true
+    },
+    {
+      "from": "fiveyearwork",
+      "option": "Between 2 and 4 years",
+      "optionIndex": 1,
+      "to": "page_lyensr",
+      "toQuestion": "What is the total value of your assets? (Do not include house & car)",
+      "urlChanged": true
+    },
+    {
+      "from": "fiveyearwork",
+      "option": "Between 4 and 6 years",
+      "optionIndex": 2,
+      "to": "outofwork",
+      "toQuestion": "Do you expect to be out of work for at least a year due to a disability?",
+      "urlChanged": true
+    },
+    {
+      "from": "fiveyearwork",
+      "option": "More than 6 years",
+      "optionIndex": 3,
+      "to": "outofwork",
+      "toQuestion": "Do you expect to be out of work for at least a year due to a disability?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_lyensr",
+      "option": "Less than $2000",
+      "optionIndex": 0,
+      "to": "outofwork",
+      "toQuestion": "Do you expect to be out of work for at least a year due to a disability?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_lyensr",
+      "option": "More than $2000",
+      "optionIndex": 1,
+      "to": "outofwork",
+      "toQuestion": "Do you expect to be out of work for at least a year due to a disability?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_lyensr",
+      "option": "Not Sure",
+      "optionIndex": 2,
+      "to": "outofwork",
+      "toQuestion": "Do you expect to be out of work for at least a year due to a disability?",
+      "urlChanged": true
+    },
+    {
+      "from": "outofwork",
+      "option": "YES",
+      "optionIndex": 0,
+      "to": "visit",
+      "toQuestion": "Are you currently seeing a doctor or taking prescribed medication for a disability?",
+      "urlChanged": true
+    },
+    {
+      "from": "outofwork",
+      "option": "NO",
+      "optionIndex": 1,
+      "to": "visit",
+      "toQuestion": "Are you currently seeing a doctor or taking prescribed medication for a disability?",
+      "urlChanged": true
+    },
+    {
+      "from": "visit",
+      "option": "YES",
+      "optionIndex": 0,
+      "to": "page_igxwft",
+      "toQuestion": "Do you have a pending application for Social Security Disability (SSD) benefits?",
+      "urlChanged": true
+    },
+    {
+      "from": "visit",
+      "option": "NO",
+      "optionIndex": 1,
+      "to": "page_zbkz5e",
+      "toQuestion": "When was the last time you visited a doctor?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_igxwft",
+      "option": "YES",
+      "optionIndex": 0,
+      "to": "attorney",
+      "toQuestion": "Is an attorney or advocate currently representing you for this SSD application?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_igxwft",
+      "option": "NO",
+      "optionIndex": 1,
+      "to": "page_1kwm6b",
+      "toQuestion": "How do you identify your gender?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_zbkz5e",
+      "option": "Within last 12 months",
+      "optionIndex": 0,
+      "to": "page_igxwft",
+      "toQuestion": "Do you have a pending application for Social Security Disability (SSD) benefits?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_zbkz5e",
+      "option": "More than 12 months ago",
+      "optionIndex": 1,
+      "to": "page_igxwft",
+      "toQuestion": "Do you have a pending application for Social Security Disability (SSD) benefits?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_zbkz5e",
+      "option": "I haven't had one",
+      "optionIndex": 2,
+      "to": "page_igxwft",
+      "toQuestion": "Do you have a pending application for Social Security Disability (SSD) benefits?",
+      "urlChanged": true
+    },
+    {
+      "from": "attorney",
+      "option": "YES",
+      "optionIndex": 0,
+      "to": "attorneyfirm",
+      "toQuestion": "Which firm is currently helping you with your disability application?",
+      "urlChanged": true
+    },
+    {
+      "from": "attorney",
+      "option": "NO",
+      "optionIndex": 1,
+      "to": "page_9rrpa3",
+      "toQuestion": "Was your Disability application denied?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_1kwm6b",
+      "option": "Male",
+      "optionIndex": 0,
+      "to": "page_uhs14w",
+      "toQuestion": "Please select the option below that represents your age range",
+      "urlChanged": true
+    },
+    {
+      "from": "page_1kwm6b",
+      "option": "Female",
+      "optionIndex": 1,
+      "to": "page_uhs14w",
+      "toQuestion": "Please select the option below that represents your age range",
+      "urlChanged": true
+    },
+    {
+      "from": "page_1kwm6b",
+      "option": "Non - Binary",
+      "optionIndex": 2,
+      "to": "page_uhs14w",
+      "toQuestion": "Please select the option below that represents your age range",
+      "urlChanged": true
+    },
+    {
+      "from": "page_1kwm6b",
+      "option": "Prefer not to respond",
+      "optionIndex": 3,
+      "to": "page_uhs14w",
+      "toQuestion": "Please select the option below that represents your age range",
+      "urlChanged": true
+    },
+    {
+      "from": "attorneyfirm",
+      "option": "Trajector Disability",
+      "optionIndex": 0,
+      "to": "page_9rrpa3",
+      "toQuestion": "Was your Disability application denied?",
+      "urlChanged": true
+    },
+    {
+      "from": "attorneyfirm",
+      "option": "Premier Disability",
+      "optionIndex": 1,
+      "to": "page_9rrpa3",
+      "toQuestion": "Was your Disability application denied?",
+      "urlChanged": true
+    },
+    {
+      "from": "attorneyfirm",
+      "option": "Citizens Disability",
+      "optionIndex": 2,
+      "to": "page_9rrpa3",
+      "toQuestion": "Was your Disability application denied?",
+      "urlChanged": true
+    },
+    {
+      "from": "attorneyfirm",
+      "option": "Nyman Turkish PC",
+      "optionIndex": 3,
+      "to": "page_9rrpa3",
+      "toQuestion": "Was your Disability application denied?",
+      "urlChanged": true
+    },
+    {
+      "from": "attorneyfirm",
+      "option": "Allsup",
+      "optionIndex": 4,
+      "to": "page_9rrpa3",
+      "toQuestion": "Was your Disability application denied?",
+      "urlChanged": true
+    },
+    {
+      "from": "attorneyfirm",
+      "option": "Quikaid",
+      "optionIndex": 5,
+      "to": "page_9rrpa3",
+      "toQuestion": "Was your Disability application denied?",
+      "urlChanged": true
+    },
+    {
+      "from": "attorneyfirm",
+      "option": "Kirkendall Dwyer LLP",
+      "optionIndex": 6,
+      "to": "page_9rrpa3",
+      "toQuestion": "Was your Disability application denied?",
+      "urlChanged": true
+    },
+    {
+      "from": "attorneyfirm",
+      "option": "Newlin Disability",
+      "optionIndex": 7,
+      "to": "page_9rrpa3",
+      "toQuestion": "Was your Disability application denied?",
+      "urlChanged": true
+    },
+    {
+      "from": "attorneyfirm",
+      "option": "Other / None of the above",
+      "optionIndex": 8,
+      "to": "page_9rrpa3",
+      "toQuestion": "Was your Disability application denied?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_9rrpa3",
+      "option": "YES",
+      "optionIndex": 0,
+      "to": "page_sozf2w",
+      "toQuestion": "Where are you in the process?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_9rrpa3",
+      "option": "NO",
+      "optionIndex": 1,
+      "to": "page_1kwm6b",
+      "toQuestion": "How do you identify your gender?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_uhs14w",
+      "option": "Under 40",
+      "optionIndex": 0,
+      "to": "page_8w2qbu",
+      "toQuestion": "What is your current marital status?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_uhs14w",
+      "option": "40-49",
+      "optionIndex": 1,
+      "to": "page_8w2qbu",
+      "toQuestion": "What is your current marital status?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_uhs14w",
+      "option": "50-54",
+      "optionIndex": 2,
+      "to": "page_8w2qbu",
+      "toQuestion": "What is your current marital status?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_uhs14w",
+      "option": "55-63",
+      "optionIndex": 3,
+      "to": "page_8w2qbu",
+      "toQuestion": "What is your current marital status?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_uhs14w",
+      "option": "64 or older",
+      "optionIndex": 4,
+      "to": "page_8w2qbu",
+      "toQuestion": "What is your current marital status?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_sozf2w",
+      "option": "Waiting on first decision",
+      "optionIndex": 0,
+      "to": "page_ddujlp",
+      "toQuestion": "How long you've been waiting ?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_sozf2w",
+      "option": "First decision was denied",
+      "optionIndex": 1,
+      "to": "page_denialage",
+      "toQuestion": "About how long ago did you get the denial?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_sozf2w",
+      "option": "I requested reconsideration",
+      "optionIndex": 2,
+      "to": "page_reconstatus",
+      "toQuestion": "What's the status of your reconsideration?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_sozf2w",
+      "option": "I requested a hearing",
+      "optionIndex": 3,
+      "to": "page_doic6e",
+      "toQuestion": "What's the current status of your hearing?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_8w2qbu",
+      "option": "Single",
+      "optionIndex": 0,
+      "to": "email",
+      "toQuestion": "You're Pre-Qualified for Up to $4,152/Month!",
+      "urlChanged": true
+    },
+    {
+      "from": "page_8w2qbu",
+      "option": "Married",
+      "optionIndex": 1,
+      "to": "email",
+      "toQuestion": "You're Pre-Qualified for Up to $4,152/Month!",
+      "urlChanged": true
+    },
+    {
+      "from": "page_8w2qbu",
+      "option": "Widowed",
+      "optionIndex": 2,
+      "to": "email",
+      "toQuestion": "You're Pre-Qualified for Up to $4,152/Month!",
+      "urlChanged": true
+    },
+    {
+      "from": "page_8w2qbu",
+      "option": "Divorced",
+      "optionIndex": 3,
+      "to": "email",
+      "toQuestion": "You're Pre-Qualified for Up to $4,152/Month!",
+      "urlChanged": true
+    },
+    {
+      "from": "page_8w2qbu",
+      "option": "Separated (Not receiving support)",
+      "optionIndex": 4,
+      "to": "email",
+      "toQuestion": "You're Pre-Qualified for Up to $4,152/Month!",
+      "urlChanged": true
+    },
+    {
+      "from": "page_ddujlp",
+      "option": "Less than 3 Months",
+      "optionIndex": 0,
+      "to": "page_1kwm6b",
+      "toQuestion": "How do you identify your gender?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_ddujlp",
+      "option": "3 – 6 Months",
+      "optionIndex": 1,
+      "to": "page_1kwm6b",
+      "toQuestion": "How do you identify your gender?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_ddujlp",
+      "option": "6 – 9 Months",
+      "optionIndex": 2,
+      "to": "page_1kwm6b",
+      "toQuestion": "How do you identify your gender?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_ddujlp",
+      "option": "More than 9 Months",
+      "optionIndex": 3,
+      "to": "page_1kwm6b",
+      "toQuestion": "How do you identify your gender?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_denialage",
+      "option": "Less than 45 days ago",
+      "optionIndex": 0,
+      "to": "page_1kwm6b",
+      "toQuestion": "How do you identify your gender?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_denialage",
+      "option": "More than 45 days ago",
+      "optionIndex": 1,
+      "to": "page_1kwm6b",
+      "toQuestion": "How do you identify your gender?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_reconstatus",
+      "option": "Got denied",
+      "optionIndex": 0,
+      "to": "page_denialage",
+      "toQuestion": "About how long ago did you get the denial?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_reconstatus",
+      "option": "Pending",
+      "optionIndex": 1,
+      "to": "page_ddujlp",
+      "toQuestion": "How long you've been waiting ?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_doic6e",
+      "option": "Waiting to be scheduled",
+      "optionIndex": 0,
+      "to": "page_ddujlp",
+      "toQuestion": "How long you've been waiting ?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_doic6e",
+      "option": "A hearing is scheduled",
+      "optionIndex": 1,
+      "to": "page_6dkfid",
+      "toQuestion": "In which month is your hearing scheduled?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_doic6e",
+      "option": "Hearing already happened - waiting on a decision",
+      "optionIndex": 2,
+      "to": "page_ddujlp",
+      "toQuestion": "How long you've been waiting ?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_6dkfid",
+      "option": "May",
+      "optionIndex": 0,
+      "to": "page_1kwm6b",
+      "toQuestion": "How do you identify your gender?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_6dkfid",
+      "option": "June",
+      "optionIndex": 1,
+      "to": "page_1kwm6b",
+      "toQuestion": "How do you identify your gender?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_6dkfid",
+      "option": "July",
+      "optionIndex": 2,
+      "to": "page_1kwm6b",
+      "toQuestion": "How do you identify your gender?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_6dkfid",
+      "option": "August",
+      "optionIndex": 3,
+      "to": "page_1kwm6b",
+      "toQuestion": "How do you identify your gender?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_6dkfid",
+      "option": "September",
+      "optionIndex": 4,
+      "to": "page_1kwm6b",
+      "toQuestion": "How do you identify your gender?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_6dkfid",
+      "option": "October",
+      "optionIndex": 5,
+      "to": "page_1kwm6b",
+      "toQuestion": "How do you identify your gender?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_6dkfid",
+      "option": "November",
+      "optionIndex": 6,
+      "to": "page_1kwm6b",
+      "toQuestion": "How do you identify your gender?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_6dkfid",
+      "option": "December",
+      "optionIndex": 7,
+      "to": "page_1kwm6b",
+      "toQuestion": "How do you identify your gender?",
+      "urlChanged": true
+    },
+    {
+      "from": "page_6dkfid",
+      "option": "Next year (2027)",
+      "optionIndex": 8,
+      "to": "page_1kwm6b",
+      "toQuestion": "How do you identify your gender?",
+      "urlChanged": true
+    },
+    {
+      "from": "outofwork",
+      "option": "YES",
+      "to": "conditionstart",
+      "toQuestion": "When did your condition start keeping you from working? An approximate date is fine. This is when your health started keeping you from working, not date of diagnosis.",
+      "note": "only when \"hours per week\" was answered \"Not working\"",
+      "viaReplay": true
+    },
+    {
+      "from": "conditionstart",
+      "option": "Within the last 6 months",
+      "optionIndex": 0,
+      "to": "visit",
+      "toQuestion": "Are you currently seeing a doctor or taking prescribed medication for a disability?",
+      "urlChanged": true
+    },
+    {
+      "from": "conditionstart",
+      "option": "6 to 12 months ago",
+      "optionIndex": 1,
+      "to": "visit",
+      "toQuestion": "Are you currently seeing a doctor or taking prescribed medication for a disability?",
+      "urlChanged": true
+    },
+    {
+      "from": "conditionstart",
+      "option": "More than 1 year ago",
+      "optionIndex": 2,
+      "to": "visit",
+      "toQuestion": "Are you currently seeing a doctor or taking prescribed medication for a disability?",
+      "urlChanged": true
+    },
+    {
+      "from": "conditionstart",
+      "option": "I'm not sure",
+      "optionIndex": 3,
+      "to": "visit",
+      "toQuestion": "Are you currently seeing a doctor or taking prescribed medication for a disability?",
+      "urlChanged": true
+    }
+  ],
+  "terminals": [
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/email",
+      "phase": "email",
+      "headline": "",
+      "question": "You're Pre-Qualified for Up to $4,152/Month!",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "Send My Results"
+        },
+        {
+          "index": 1,
+          "text": "Send My Results"
+        }
+      ],
+      "fields": [
+        {
+          "tag": "INPUT",
+          "type": "email",
+          "name": "email",
+          "placeholder": "Your email address"
+        }
+      ],
+      "id": "email",
+      "step": 24,
+      "screenshot": "funnel_shots/24_email.png",
+      "pageText": "DP Disability Path You're Pre-Qualified for Up to $4,152/Month! Enter your email to get your results now! Where should we send them? Send My Results *Not available to California residents *Maximum possible benefit per SSA. Individual amounts vary. Terms·Privacy policy Send My Results"
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/contact",
+      "phase": "contact",
+      "headline": "",
+      "question": "Final step: Enter your contact info to see how much you qualify for",
+      "buttons": [
+        {
+          "index": 0,
+          "text": "See What I Am Eligible For 👉"
+        }
+      ],
+      "fields": [
+        {
+          "tag": "INPUT",
+          "type": "text",
+          "name": "fname",
+          "placeholder": "Your first name"
+        },
+        {
+          "tag": "INPUT",
+          "type": "text",
+          "name": "lname",
+          "placeholder": "Your last name"
+        },
+        {
+          "tag": "INPUT",
+          "type": "tel",
+          "name": "phone",
+          "placeholder": "Your mobile number"
+        }
+      ],
+      "id": "contact",
+      "step": 25,
+      "screenshot": "funnel_shots/25_contact.png",
+      "pageText": "DP Disability Path Final step: Enter your contact info to see how much you qualify for 🇺🇸 See What I Am Eligible For 👉 By clicking 'Continue', I am providing my ESIGN signature and express written consent to Disability Path and disability firms and partners to contact me via calls and SMS using automated technology. I agree to Disability Path's privacy policy and terms."
+    },
+    {
+      "url": "https://funnel.disabilitypath.org/qualification-v30/result",
+      "phase": "result",
+      "headline": "Last step: a quick 5-minute call.",
+      "question": "Thank You for Your Time",
+      "buttons": [],
+      "fields": [],
+      "id": "result",
+      "step": 26,
+      "screenshot": "funnel_shots/26_result.png",
+      "pageText": "You may qualify for up to $4,152/month* in benefits 15% Reviewing your responses 256-bit encrypted • Your data is never shared"
+    }
+  ],
+  "unvisitedQuestions": [],
+  "consoleErrors": []
+}

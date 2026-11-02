@@ -1,0 +1,16 @@
+import { fileURLToPath } from 'node:url';
+
+const root = fileURLToPath(new URL('.', import.meta.url));
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  poweredByHeader: false,
+  allowedDevOrigins: ['127.0.0.1', 'localhost'],
+  turbopack: { root },
+  experimental: {
+    optimizePackageImports: ['framer-motion'],
+  },
+};
+
+export default nextConfig;

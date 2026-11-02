@@ -1,0 +1,382 @@
+{
+  "name": "LexHive — Lead Ingestion",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lexhive-lead",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "b1f0a3c2-1111-4a0a-9a01-000000000001",
+      "name": "Lead Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-640, 0],
+      "webhookId": "lexhive-lead"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Verify the HMAC the Next.js app sent, then flatten the payload for Airtable.\nconst crypto = require('crypto');\n\nconst input = $json;\nconst raw = typeof input.body === 'string' ? input.body : JSON.stringify(input.body ?? input);\nconst headers = input.headers ?? {};\nconst provided = String(headers['x-lexhive-signature'] ?? '').replace(/^sha256=/, '');\nconst secret = process.env.N8N_WEBHOOK_SECRET ?? '';\n\nconst expected = secret ? crypto.createHmac('sha256', secret).update(raw, 'utf8').digest('hex') : '';\nconst signaturesMatch =\n  expected.length > 0 &&\n  provided.length === expected.length &&\n  crypto.timingSafeEqual(Buffer.from(provided, 'utf8'), Buffer.from(expected, 'utf8'));\n\nlet payload;\ntry {\n  payload = typeof input.body === 'string' ? JSON.parse(input.body) : input.body ?? input;\n} catch (error) {\n  payload = null;\n}\n\nconst problems = [];\nif (!payload) problems.push('invalid_json');\nif (payload && !payload.lead_id) problems.push('missing_lead_id');\nif (payload && !payload.contact?.email) problems.push('missing_email');\nif (payload && !payload.contact?.phone) problems.push('missing_phone');\nif (!signaturesMatch) problems.push('invalid_signature');\n\nconst qualification = payload?.qualification ?? {};\nconst demographics = payload?.demographics ?? {};\nconst attribution = payload?.attribution ?? {};\nconst leadId = payload?.lead_id ?? '';\n\nconst bool = value => (value === true ? 'Yes' : value === false ? 'No' : '');\n\nreturn [{\n  json: {\n    signatureValid: signaturesMatch,\n    valid: problems.length === 0,\n    problems,\n    raw_body: raw,\n    signature: expected ? `sha256=${expected}` : '',\n    lead_id: leadId,\n    submission_id: payload?.submission_id ?? '',\n    session_id: payload?.session_id ?? '',\n    submitted_at: payload?.submitted_at ?? '',\n    payload,\n    airtable: {\n      'Lead ID': leadId,\n      'Submission ID': payload?.submission_id ?? '',\n      'First Name': payload?.contact?.first_name ?? '',\n      'Last Name': payload?.contact?.last_name ?? '',\n      'Email': payload?.contact?.email ?? '',\n      'Phone': payload?.contact?.phone ?? '',\n      'Receiving Benefits': qualification.receiving_benefits ?? '',\n      'Hours Per Week': qualification.hours_per_week ?? '',\n      'Years Employed': qualification.years_employed ?? '',\n      'Assets': qualification.assets ?? '',\n      'Expects Out Of Work': bool(qualification.expects_out_of_work),\n      'Condition Start': qualification.condition_start ?? '',\n      'Doctor Status': qualification.doctor_status ?? '',\n      'Pending Application': bool(qualification.pending_application),\n      'Attorney Status': qualification.attorney_status ?? '',\n      'Attorney Firm': qualification.attorney_firm ?? '',\n      'Application Denied': bool(qualification.application_denied),\n      'Claim Stage': qualification.claim_stage ?? '',\n      'Hearing Status': qualification.hearing_status ?? '',\n      'Waiting Period': qualification.waiting_period ?? '',\n      'Denial Age': qualification.denial_age ?? '',\n      'Gender': demographics.gender ?? '',\n      'Age Range': demographics.age_range ?? '',\n      'Marital Status': demographics.marital_status ?? '',\n      'UTM Source': attribution.utm?.utm_source ?? '',\n      'UTM Medium': attribution.utm?.utm_medium ?? '',\n      'UTM Campaign': attribution.utm?.utm_campaign ?? '',\n      'Landing URL': attribution.landingUrl ?? '',\n      'Submitted At': payload?.submitted_at ?? '',\n      'Sync Status': 'received'\n    }\n  }\n}];"
+      },
+      "id": "b1f0a3c2-1111-4a0a-9a01-000000000002",
+      "name": "Verify & Normalize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-420, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "valid",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b1f0a3c2-1111-4a0a-9a01-000000000003",
+      "name": "Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [-180, 0]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "={{ $env.AIRTABLE_BASE_ID }}",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "={{ $env.AIRTABLE_TABLE_NAME || 'Leads' }}",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Lead ID": "={{ $json.airtable['Lead ID'] }}",
+            "Submission ID": "={{ $json.airtable['Submission ID'] }}",
+            "First Name": "={{ $json.airtable['First Name'] }}",
+            "Last Name": "={{ $json.airtable['Last Name'] }}",
+            "Email": "={{ $json.airtable['Email'] }}",
+            "Phone": "={{ $json.airtable['Phone'] }}",
+            "Receiving Benefits": "={{ $json.airtable['Receiving Benefits'] }}",
+            "Hours Per Week": "={{ $json.airtable['Hours Per Week'] }}",
+            "Years Employed": "={{ $json.airtable['Years Employed'] }}",
+            "Assets": "={{ $json.airtable['Assets'] }}",
+            "Expects Out Of Work": "={{ $json.airtable['Expects Out Of Work'] }}",
+            "Condition Start": "={{ $json.airtable['Condition Start'] }}",
+            "Doctor Status": "={{ $json.airtable['Doctor Status'] }}",
+            "Pending Application": "={{ $json.airtable['Pending Application'] }}",
+            "Attorney Status": "={{ $json.airtable['Attorney Status'] }}",
+            "Attorney Firm": "={{ $json.airtable['Attorney Firm'] }}",
+            "Application Denied": "={{ $json.airtable['Application Denied'] }}",
+            "Claim Stage": "={{ $json.airtable['Claim Stage'] }}",
+            "Hearing Status": "={{ $json.airtable['Hearing Status'] }}",
+            "Waiting Period": "={{ $json.airtable['Waiting Period'] }}",
+            "Denial Age": "={{ $json.airtable['Denial Age'] }}",
+            "Gender": "={{ $json.airtable['Gender'] }}",
+            "Age Range": "={{ $json.airtable['Age Range'] }}",
+            "Marital Status": "={{ $json.airtable['Marital Status'] }}",
+            "UTM Source": "={{ $json.airtable['UTM Source'] }}",
+            "UTM Medium": "={{ $json.airtable['UTM Medium'] }}",
+            "UTM Campaign": "={{ $json.airtable['UTM Campaign'] }}",
+            "Landing URL": "={{ $json.airtable['Landing URL'] }}",
+            "Submitted At": "={{ $json.airtable['Submitted At'] }}",
+            "Sync Status": "={{ $json.airtable['Sync Status'] }}"
+          },
+          "matchingColumns": ["Lead ID"],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "b1f0a3c2-1111-4a0a-9a01-000000000004",
+      "name": "Upsert Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [80, -120],
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "REPLACE_WITH_CREDENTIAL_ID",
+          "name": "Airtable Personal Access Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/mark_lead_synced",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ target_lead_id: $('Verify & Normalize').item.json.lead_id }) }}",
+        "options": {}
+      },
+      "id": "b1f0a3c2-1111-4a0a-9a01-000000000005",
+      "name": "Mark Lead Synced",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [320, -120],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, lead_id: $('Verify & Normalize').item.json.lead_id, synced: true }) }}",
+        "options": {
+          "responseCode": 202
+        }
+      },
+      "id": "b1f0a3c2-1111-4a0a-9a01-000000000009",
+      "name": "Accepted",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [560, -220]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build the DLQ callback the LexHive app expects. The body is signed with\n// the same secret the app verifies in /api/webhooks/failures.\nconst crypto = require('crypto');\nconst original = $('Verify & Normalize').item.json;\nconst failure = $json;\n\nconst message =\n  failure.error?.message ??\n  failure.error ??\n  failure.message ??\n  'n8n downstream node failed';\n\nconst body = {\n  source: 'n8n_webhook',\n  submission_id: original.submission_id,\n  lead_id: original.lead_id,\n  error: String(message).slice(0, 2000),\n  attempts: 1,\n  payload: original.payload\n};\n\nconst raw = JSON.stringify(body);\nconst secret = process.env.N8N_WEBHOOK_SECRET ?? '';\nconst signature = secret ? crypto.createHmac('sha256', secret).update(raw, 'utf8').digest('hex') : '';\n\nreturn [{ json: { raw_body: raw, signature: signature ? `sha256=${signature}` : '', message: String(message) } }];"
+      },
+      "id": "b1f0a3c2-1111-4a0a-9a01-000000000006",
+      "name": "Build Failure Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [560, 40]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.LEXHIVE_APP_URL }}/api/webhooks/failures",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "x-lexhive-signature",
+              "value": "={{ $json.signature }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.raw_body }}",
+        "options": {}
+      },
+      "id": "b1f0a3c2-1111-4a0a-9a01-000000000007",
+      "name": "Report to DLQ",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [780, 40],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ text: `:rotating_light: LexHive lead sync failed for ${$('Verify & Normalize').item.json.lead_id}: ${$('Build Failure Report').item.json.message}` }) }}",
+        "options": {}
+      },
+      "id": "b1f0a3c2-1111-4a0a-9a01-000000000008",
+      "name": "Slack Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1000, 40],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, lead_id: $('Verify & Normalize').item.json.lead_id, queued: true }) }}",
+        "options": {
+          "responseCode": 502
+        }
+      },
+      "id": "b1f0a3c2-1111-4a0a-9a01-00000000000a",
+      "name": "Degraded",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1220, 40]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: false, error: 'invalid_signature_or_payload', problems: $('Verify & Normalize').item.json.problems }) }}",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "b1f0a3c2-1111-4a0a-9a01-00000000000b",
+      "name": "Rejected",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [80, 200]
+    }
+  ],
+  "connections": {
+    "Lead Webhook": {
+      "main": [
+        [
+          {
+            "node": "Verify & Normalize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify & Normalize": {
+      "main": [
+        [
+          {
+            "node": "Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid?": {
+      "main": [
+        [
+          {
+            "node": "Upsert Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rejected",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Airtable": {
+      "main": [
+        [
+          {
+            "node": "Mark Lead Synced",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Failure Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Lead Synced": {
+      "main": [
+        [
+          {
+            "node": "Accepted",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Failure Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Failure Report": {
+      "main": [
+        [
+          {
+            "node": "Report to DLQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Report to DLQ": {
+      "main": [
+        [
+          {
+            "node": "Slack Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Alert": {
+      "main": [
+        [
+          {
+            "node": "Degraded",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "pinData": {},
+  "versionId": "8f3c1a10-0000-4000-8000-000000000001",
+  "active": false,
+  "tags": []
+}

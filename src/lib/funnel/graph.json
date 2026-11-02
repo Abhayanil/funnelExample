@@ -1,0 +1,595 @@
+{
+  "version": "qualification-v30",
+  "generatedAt": "2026-11-01T15:25:59.439Z",
+  "source": "https://funnel.disabilitypath.org/qualification-v30",
+  "start": "start",
+  "terminal": "result",
+  "steps": [
+    {
+      "id": "start",
+      "kind": "landing",
+      "headline": "Over 50 and Unemployed?",
+      "question": "Are You 40 Years or Older?",
+      "subhead": "You may be eligible for up to $4,152 every month in disability benefits. Answer a few questions to see if you qualify.",
+      "options": [
+        {
+          "label": "YES",
+          "next": "receiving_ben"
+        },
+        {
+          "label": "NO",
+          "next": "receiving_ben"
+        }
+      ],
+      "remaining": 12
+    },
+    {
+      "id": "receiving_ben",
+      "kind": "question",
+      "question": "Which of the following disability benefits are you currently receiving?",
+      "options": [
+        {
+          "label": "Social Security Disability (SSD) Benefits",
+          "next": "page_sm72h5"
+        },
+        {
+          "label": "Supplemental Security Income (SSI) Benefits",
+          "next": "page_sm72h5"
+        },
+        {
+          "label": "Both SSD and SSI Benefits",
+          "next": "page_sm72h5"
+        },
+        {
+          "label": "I am not receiving any disability benefits (SSD or SSI)",
+          "next": "page_sm72h5"
+        }
+      ],
+      "remaining": 11
+    },
+    {
+      "id": "page_sm72h5",
+      "kind": "question",
+      "question": "How many hours per week are you currently working?",
+      "options": [
+        {
+          "label": "Not working",
+          "next": "lastworked"
+        },
+        {
+          "label": "20 hours or less per week",
+          "next": "fiveyearwork"
+        },
+        {
+          "label": "More than 20 hours per week",
+          "next": "fiveyearwork"
+        }
+      ],
+      "remaining": 10
+    },
+    {
+      "id": "lastworked",
+      "kind": "question",
+      "question": "When did you last work?",
+      "options": [
+        {
+          "label": "Within the last 4 months",
+          "next": "fiveyearwork"
+        },
+        {
+          "label": "4 to 7 months ago",
+          "next": "fiveyearwork"
+        },
+        {
+          "label": "7 to 12 months ago",
+          "next": "fiveyearwork"
+        },
+        {
+          "label": "More than 12 months ago",
+          "next": "fiveyearwork"
+        }
+      ],
+      "remaining": 10
+    },
+    {
+      "id": "fiveyearwork",
+      "kind": "question",
+      "question": "In the past 10 years, how many years have you been employed?",
+      "options": [
+        {
+          "label": "Less than 2 years",
+          "next": "page_lyensr"
+        },
+        {
+          "label": "Between 2 and 4 years",
+          "next": "page_lyensr"
+        },
+        {
+          "label": "Between 4 and 6 years",
+          "next": "outofwork"
+        },
+        {
+          "label": "More than 6 years",
+          "next": "outofwork"
+        }
+      ],
+      "remaining": 9
+    },
+    {
+      "id": "page_lyensr",
+      "kind": "question",
+      "question": "What is the total value of your assets? (Do not include house & car)",
+      "options": [
+        {
+          "label": "Less than $2000",
+          "next": "outofwork"
+        },
+        {
+          "label": "More than $2000",
+          "next": "outofwork"
+        },
+        {
+          "label": "Not Sure",
+          "next": "outofwork"
+        }
+      ],
+      "remaining": 9
+    },
+    {
+      "id": "outofwork",
+      "kind": "question",
+      "question": "Do you expect to be out of work for at least a year due to a disability?",
+      "options": [
+        {
+          "label": "YES",
+          "next": "conditionstart",
+          "when": [
+            {
+              "step": "page_sm72h5",
+              "equals": "Not working"
+            }
+          ],
+          "help": "only when \"hours per week\" was answered \"Not working\"",
+          "fallback": "visit"
+        },
+        {
+          "label": "NO",
+          "next": "visit"
+        }
+      ],
+      "remaining": 8
+    },
+    {
+      "id": "visit",
+      "kind": "question",
+      "question": "Are you currently seeing a doctor or taking prescribed medication for a disability?",
+      "options": [
+        {
+          "label": "YES",
+          "next": "page_igxwft"
+        },
+        {
+          "label": "NO",
+          "next": "page_zbkz5e"
+        }
+      ],
+      "remaining": 7
+    },
+    {
+      "id": "page_igxwft",
+      "kind": "question",
+      "question": "Do you have a pending application for Social Security Disability (SSD) benefits?",
+      "options": [
+        {
+          "label": "YES",
+          "next": "attorney"
+        },
+        {
+          "label": "NO",
+          "next": "page_1kwm6b"
+        }
+      ],
+      "remaining": 6
+    },
+    {
+      "id": "page_zbkz5e",
+      "kind": "question",
+      "question": "When was the last time you visited a doctor?",
+      "options": [
+        {
+          "label": "Within last 12 months",
+          "next": "page_igxwft"
+        },
+        {
+          "label": "More than 12 months ago",
+          "next": "page_igxwft"
+        },
+        {
+          "label": "I haven't had one",
+          "next": "page_igxwft"
+        }
+      ],
+      "remaining": 7
+    },
+    {
+      "id": "attorney",
+      "kind": "question",
+      "question": "Is an attorney or advocate currently representing you for this SSD application?",
+      "options": [
+        {
+          "label": "YES",
+          "next": "attorneyfirm"
+        },
+        {
+          "label": "NO",
+          "next": "page_9rrpa3"
+        }
+      ],
+      "remaining": 7
+    },
+    {
+      "id": "page_1kwm6b",
+      "kind": "question",
+      "question": "How do you identify your gender?",
+      "options": [
+        {
+          "label": "Male",
+          "next": "page_uhs14w"
+        },
+        {
+          "label": "Female",
+          "next": "page_uhs14w"
+        },
+        {
+          "label": "Non - Binary",
+          "next": "page_uhs14w"
+        },
+        {
+          "label": "Prefer not to respond",
+          "next": "page_uhs14w"
+        }
+      ],
+      "remaining": 5
+    },
+    {
+      "id": "attorneyfirm",
+      "kind": "question",
+      "question": "Which firm is currently helping you with your disability application?",
+      "options": [
+        {
+          "label": "Trajector Disability",
+          "next": "page_9rrpa3"
+        },
+        {
+          "label": "Premier Disability",
+          "next": "page_9rrpa3"
+        },
+        {
+          "label": "Citizens Disability",
+          "next": "page_9rrpa3"
+        },
+        {
+          "label": "Nyman Turkish PC",
+          "next": "page_9rrpa3"
+        },
+        {
+          "label": "Allsup",
+          "next": "page_9rrpa3"
+        },
+        {
+          "label": "Quikaid",
+          "next": "page_9rrpa3"
+        },
+        {
+          "label": "Kirkendall Dwyer LLP",
+          "next": "page_9rrpa3"
+        },
+        {
+          "label": "Newlin Disability",
+          "next": "page_9rrpa3"
+        },
+        {
+          "label": "Other / None of the above",
+          "next": "page_9rrpa3"
+        }
+      ],
+      "remaining": 7
+    },
+    {
+      "id": "page_9rrpa3",
+      "kind": "question",
+      "question": "Was your Disability application denied?",
+      "options": [
+        {
+          "label": "YES",
+          "next": "page_sozf2w"
+        },
+        {
+          "label": "NO",
+          "next": "page_1kwm6b"
+        }
+      ],
+      "remaining": 6
+    },
+    {
+      "id": "page_uhs14w",
+      "kind": "question",
+      "question": "Please select the option below that represents your age range",
+      "options": [
+        {
+          "label": "Under 40",
+          "next": "page_8w2qbu"
+        },
+        {
+          "label": "40-49",
+          "next": "page_8w2qbu"
+        },
+        {
+          "label": "50-54",
+          "next": "page_8w2qbu"
+        },
+        {
+          "label": "55-63",
+          "next": "page_8w2qbu"
+        },
+        {
+          "label": "64 or older",
+          "next": "page_8w2qbu"
+        }
+      ],
+      "remaining": 4
+    },
+    {
+      "id": "page_sozf2w",
+      "kind": "question",
+      "question": "Where are you in the process?",
+      "options": [
+        {
+          "label": "Waiting on first decision",
+          "next": "page_ddujlp"
+        },
+        {
+          "label": "First decision was denied",
+          "next": "page_denialage"
+        },
+        {
+          "label": "I requested reconsideration",
+          "next": "page_reconstatus"
+        },
+        {
+          "label": "I requested a hearing",
+          "next": "page_doic6e"
+        }
+      ],
+      "remaining": 7
+    },
+    {
+      "id": "page_8w2qbu",
+      "kind": "question",
+      "question": "What is your current marital status?",
+      "options": [
+        {
+          "label": "Single",
+          "next": "email"
+        },
+        {
+          "label": "Married",
+          "next": "email"
+        },
+        {
+          "label": "Widowed",
+          "next": "email"
+        },
+        {
+          "label": "Divorced",
+          "next": "email"
+        },
+        {
+          "label": "Separated (Not receiving support)",
+          "next": "email"
+        }
+      ],
+      "remaining": 3
+    },
+    {
+      "id": "page_ddujlp",
+      "kind": "question",
+      "question": "How long you've been waiting ?",
+      "options": [
+        {
+          "label": "Less than 3 Months",
+          "next": "page_1kwm6b"
+        },
+        {
+          "label": "3 – 6 Months",
+          "next": "page_1kwm6b"
+        },
+        {
+          "label": "6 – 9 Months",
+          "next": "page_1kwm6b"
+        },
+        {
+          "label": "More than 9 Months",
+          "next": "page_1kwm6b"
+        }
+      ],
+      "remaining": 6
+    },
+    {
+      "id": "page_denialage",
+      "kind": "question",
+      "question": "About how long ago did you get the denial?",
+      "options": [
+        {
+          "label": "Less than 45 days ago",
+          "next": "page_1kwm6b"
+        },
+        {
+          "label": "More than 45 days ago",
+          "next": "page_1kwm6b"
+        }
+      ],
+      "remaining": 6
+    },
+    {
+      "id": "page_reconstatus",
+      "kind": "question",
+      "question": "What's the status of your reconsideration?",
+      "options": [
+        {
+          "label": "Got denied",
+          "next": "page_denialage"
+        },
+        {
+          "label": "Pending",
+          "next": "page_ddujlp"
+        }
+      ],
+      "remaining": 7
+    },
+    {
+      "id": "page_doic6e",
+      "kind": "question",
+      "question": "What's the current status of your hearing?",
+      "options": [
+        {
+          "label": "Waiting to be scheduled",
+          "next": "page_ddujlp"
+        },
+        {
+          "label": "A hearing is scheduled",
+          "next": "page_6dkfid"
+        },
+        {
+          "label": "Hearing already happened - waiting on a decision",
+          "next": "page_ddujlp"
+        }
+      ],
+      "remaining": 7
+    },
+    {
+      "id": "page_6dkfid",
+      "kind": "question",
+      "question": "In which month is your hearing scheduled?",
+      "options": [
+        {
+          "label": "May",
+          "next": "page_1kwm6b"
+        },
+        {
+          "label": "June",
+          "next": "page_1kwm6b"
+        },
+        {
+          "label": "July",
+          "next": "page_1kwm6b"
+        },
+        {
+          "label": "August",
+          "next": "page_1kwm6b"
+        },
+        {
+          "label": "September",
+          "next": "page_1kwm6b"
+        },
+        {
+          "label": "October",
+          "next": "page_1kwm6b"
+        },
+        {
+          "label": "November",
+          "next": "page_1kwm6b"
+        },
+        {
+          "label": "December",
+          "next": "page_1kwm6b"
+        },
+        {
+          "label": "Next year (2027)",
+          "next": "page_1kwm6b"
+        }
+      ],
+      "remaining": 6
+    },
+    {
+      "id": "conditionstart",
+      "kind": "question",
+      "question": "When did your condition start keeping you from working?",
+      "help": "An approximate date is fine. This is when your health started keeping you from working, not date of diagnosis.",
+      "options": [
+        {
+          "label": "Within the last 6 months",
+          "next": "visit"
+        },
+        {
+          "label": "6 to 12 months ago",
+          "next": "visit"
+        },
+        {
+          "label": "More than 1 year ago",
+          "next": "visit"
+        },
+        {
+          "label": "I'm not sure",
+          "next": "visit"
+        }
+      ],
+      "remaining": 8
+    },
+    {
+      "id": "email",
+      "kind": "email",
+      "title": "You're pre-qualified for up to $4,152/month",
+      "question": "Where should we send your results?",
+      "fields": [
+        {
+          "name": "email",
+          "type": "email",
+          "label": "Email address",
+          "placeholder": "you@example.com",
+          "autocomplete": "email"
+        }
+      ],
+      "submitLabel": "Send my results",
+      "remaining": 2
+    },
+    {
+      "id": "contact",
+      "kind": "contact",
+      "title": "Final step: enter your contact info",
+      "question": "See how much you qualify for.",
+      "fields": [
+        {
+          "name": "firstName",
+          "type": "text",
+          "label": "First name",
+          "placeholder": "Jordan",
+          "autocomplete": "given-name"
+        },
+        {
+          "name": "lastName",
+          "type": "text",
+          "label": "Last name",
+          "placeholder": "Rivera",
+          "autocomplete": "family-name"
+        },
+        {
+          "name": "phone",
+          "type": "tel",
+          "label": "Mobile number",
+          "placeholder": "(555) 123-4567",
+          "autocomplete": "tel"
+        }
+      ],
+      "submitLabel": "See what I am eligible for",
+      "remaining": 1
+    },
+    {
+      "id": "result",
+      "kind": "result",
+      "title": "Thank you for your time",
+      "question": "Last step: a quick 5-minute call.",
+      "remaining": 0
+    }
+  ]
+}
