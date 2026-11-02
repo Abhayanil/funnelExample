@@ -71,6 +71,7 @@ To persist leads instead of using memory, apply `supabase/schema.sql` and set
 | `META_TEST_EVENT_CODE` | Optional Events Manager test code; leave empty in production |
 | `N8N_WEBHOOK_URL` | Lead ingestion webhook (n8n) |
 | `N8N_WEBHOOK_SECRET` | HMAC-SHA256 secret for n8n + failure callbacks |
+| `CRM_WEBHOOK_SECRET` | HMAC-SHA256 secret for `/api/webhooks/crm-disposition` (falls back to the n8n secret) |
 | `ALERT_WEBHOOK_URL` | Slack-compatible incoming webhook for alerts |
 | `RETRY_ATTEMPTS`, `RETRY_BASE_MS`, `RETRY_MAX_MS`, `HTTP_TIMEOUT_MS` | Backoff/timeout tuning |
 | `ALLOW_DEV_ENDPOINTS` | Exposes `/api/dev/*` for tests. **Never enable in production** |
@@ -125,6 +126,7 @@ question text.
 | `InitiateCheckout` | First render of a session | ✓ | ✓ |
 | `FunnelStepComplete` | Every answered question / email capture | ✓ | ✓ |
 | `Lead` | Successful submission | ✓ | ✓ (`/api/leads` only) |
+| `QualifiedLead` | Successful submission whose rubric tier is `qualified` | — | ✓ (server-only, deterministic event id) |
 
 - **Shared ids.** `newEventId()` uses `crypto.randomUUID()`. The same value is
   passed to `fbq('track', …, { eventID })` and to `/api/telemetry` (or the
@@ -144,6 +146,42 @@ question text.
 - **Failure isolation.** Telemetry is fire-and-forget in the browser, so a
   tracking outage never blocks the funnel. Server-side CAPI failures are
   retried, then dead-lettered and alerted.
+
+### Lead quality & offline conversions
+
+`src/lib/leads/qualifier.ts` is a pure, deterministic SSA-style rubric over the
+funnel `answers` map. It evaluates working hours (SGA), work history, asset
+ceiling, medical evidence, condition duration, age, representation and the
+12-month out-of-work expectation.
+
+| Tier | Meaning | Synthetic value |
+| --- | --- | --- |
+| `qualified` | No hard stop and score ≥ 70 | `$250` |
+| `borderline` | Score 45–69, or risk signals only | `$100` |
+| `disqualified` | Any hard stop (SGA hours, <2 years work history, already represented, no medical evidence) or score < 45 | `$0` |
+
+Reason codes are stored in `leads.qualification_reasons` and labelled in the
+dashboard (`working_over_20_hours`, `already_represented`,
+`condition_under_12_months`, etc.). The `Lead` CAPI event carries
+`qualification_tier`, `lead_quality`, `qualification_score`,
+`qualification_reasons` and the synthetic `value`; only `qualified` leads also
+emit `QualifiedLead`, so Meta can optimise for quality rather than raw volume.
+
+Closed-loop feedback arrives at `POST /api/webhooks/crm-disposition` from
+Airtable/the CRM. The raw body is signed with HMAC-SHA256
+(`x-lexhive-signature: sha256=<hex>`, secret `CRM_WEBHOOK_SECRET`). The endpoint
+updates the lead and emits an offline CAPI event with the original `fbp`, `fbc`
+and `external_id`:
+
+| Disposition | Meta event |
+| --- | --- |
+| `consult_scheduled` | `Schedule` |
+| `retained` | `CompleteRegistration` |
+| `disqualified` | none (record only) |
+
+Offline event ids are deterministic (`hash(lead + disposition)`), so webhook
+retries dedupe at Meta. Contract value comes from the webhook (`contract_value`)
+or defaults to `$250` / `$1000` for the two conversion events.
 
 ---
 
@@ -165,6 +203,11 @@ showing a warning banner when data is ephemeral. Ranges: 7 / 30 / 90 days.
 | Median step time | Gap between consecutive tracked events, attributed to the later step, capped at 30 min |
 | Answer mix | Distribution of stored `answers` across captured leads |
 | Source | `utm_source`, else referrer host, else `direct` |
+| Qualified leads | Leads whose rubric tier is `qualified` |
+| Qualified rate | `qualified ÷ leads` in the range |
+| Disqualification reasons | Count/share of every reason code attached to disqualified leads |
+| Campaign quality | Volume, quality mix and qualified rate grouped by `utm_source` / `utm_campaign` |
+| Disposition | Latest CRM outcome (`consult_scheduled`, `retained`, `disqualified`) on recent leads |
 
 Branches mean step reach is not a strict waterfall: not every session sees every
 question. Contact details in the recent-leads table are masked
@@ -183,7 +226,7 @@ returns `503`. The public funnel and the API routes are unaffected.
 
 | Table | Role |
 | --- | --- |
-| `leads` | One row per submission: contact, every structured answer, raw `answers` JSONB, attribution, `lead_event_id`, status, timestamps |
+| `leads` | One row per submission: contact, every structured answer, raw `answers` JSONB, attribution, `lead_event_id`, qualification tier/score/reasons, CRM disposition/contract value/offline event id, status, timestamps |
 | `lead_tcpa_consent` | Append-only audit: consent version, exact text, page URL, IP, user agent, timestamp |
 | `telemetry_events` | Unique `event_id` ledger used as the CAPI dedupe key |
 | `dead_letter_queue` | Failed CAPI/n8n/Supabase deliveries, deduped by `dedupe_key`, replayable |
@@ -194,10 +237,16 @@ returns `503`. The public funnel and the API routes are unaffected.
 - `enqueue_dead_letter(payload jsonb)` upserts on `dedupe_key`, increments
   `attempts` and clears `resolved` when the same failure reappears.
 - `mark_lead_synced(uuid)` is called by n8n after the CRM write.
+- `apply_crm_disposition(payload jsonb)` looks up the lead by `lead_id` or
+  `submission_id`, records the disposition/contract value/offline event id and
+  returns the previous disposition so the webhook can report `changed`.
 - RLS is enabled on every table. `anon`/`authenticated` have no write grants;
   `service_role` executes the RPCs. Staff reads are gated on
   `app_metadata.lexhive_role ∈ {admin, analyst, agent}`.
-- Views: `unresolved_dead_letters`, `funnel_daily_stats`.
+- Views: `unresolved_dead_letters`, `funnel_daily_stats`,
+  `funnel_quality_by_campaign`, `funnel_disqualification_reasons`.
+- The new columns are added with `alter table … add column if not exists`, so
+  re-running the file upgrades an existing POC database without data loss.
 
 Apply with the Supabase CLI (`supabase db push`) or run the SQL file in the
 dashboard SQL editor.
@@ -273,8 +322,34 @@ still exercised by the test suite.
 | `422` | Zod validation failed (or unusable phone) |
 | `413` | Body > 64 KB |
 
-Response: `{ ok, leadId, duplicate, queued?, downstream: { capi, n8n } }`.
+Response: `{ ok, leadId, duplicate, queued?, qualification: { tier, score, reasons, value, currency }, downstream: { capi, qualifiedLead, n8n } }`.
 PII is stored in Postgres and only ever sent to Meta as SHA-256 hashes.
+
+### `POST /api/webhooks/crm-disposition`
+
+Signed by Airtable / the CRM after a consult or retainer decision.
+
+```json
+{
+  "lead_id": "uuid",
+  "status": "retained",
+  "contract_value": 2500,
+  "note": "Signed retainer"
+}
+```
+
+`submission_id` can be used instead of `lead_id`; `disposition` is accepted as an
+alias for `status`. The signature is HMAC-SHA256 over the raw body:
+
+```
+x-lexhive-signature: sha256=<hex>
+```
+
+Responses: `200` `{ ok, leadId, disposition, previousDisposition, changed,
+contractValue, offlineCapi, offlineEventId, eventName }`, `401` invalid
+signature, `404` unknown lead, `422` invalid payload, `503` webhook not
+configured or persistence unavailable. `disqualified` records the outcome
+without emitting a conversion event.
 
 ### `POST /api/telemetry`
 
@@ -300,6 +375,7 @@ Returns `{ ok, duplicate, capi: "sent" | "skipped" | "failed" }`.
 | Route | Purpose |
 | --- | --- |
 | `POST /api/webhooks/failures` | Signed callback used by n8n's error workflow to enqueue a DLQ row |
+| `POST /api/webhooks/crm-disposition` | Signed CRM feedback → lead disposition + offline Meta CAPI |
 | `GET /api/health` | Configuration/health summary |
 | `GET /api/dev/state`, `POST /api/dev/reset`, `POST /api/dev/retry` | Dev-only verification (guarded by `ALLOW_DEV_ENDPOINTS`) |
 
@@ -337,7 +413,7 @@ npm run typecheck
 npm run build
 ```
 
-19 Playwright tests cover:
+32 Playwright tests cover:
 
 - shortest-path completion, a state-dependent branch, validation gating,
   reload recovery, accessible radio group/progressbar, and back navigation;
@@ -347,8 +423,16 @@ npm run build
 - Pixel + CAPI firing with one shared `event_id`, server dedupe of repeated
   event ids, SHA-256/E.164 normalization with no raw PII in the payload, and
   rejection of malformed telemetry;
+- the qualification rubric (qualified/borderline/disqualified, hard stops,
+  risk signals, deterministic UUIDs), tiered `Lead` value, and `QualifiedLead`
+  firing only for qualified submissions;
+- signed CRM webhooks (unsigned/wrong-signature rejection, `Schedule`,
+  `CompleteRegistration`, retry idempotency, `disqualified` record-only,
+  `submission_id` lookup, unknown lead and malformed payload);
 - dashboard auth (`401` anonymous, `401` wrong password, funnel stays public),
-  KPI/step/answer aggregation, source attribution, and masked contact details.
+  KPI/step/answer aggregation, source attribution, qualified rate,
+  disqualification reasons, campaign quality, disposition chips and masked
+  contact details.
 
 The tests run serially against a single dev server because the fallback store is
 in-process. In production each request uses Supabase and is safe to run
@@ -370,8 +454,11 @@ share the dashboard credentials; in CI set `DASHBOARD_USER` /
   replay, so restrict its read access the same way as `leads`.
 - The dashboard is read-only and server-rendered; it masks email/phone and is
   behind HTTP Basic auth. Use a long random `DASHBOARD_PASSWORD` over HTTPS.
-- Set `ALLOW_IN_MEMORY_FALLBACK=0`, `ALLOW_DEV_ENDPOINTS=0` and
-  `DASHBOARD_PASSWORD` in production.
+- The CRM webhook is closed by default: without `CRM_WEBHOOK_SECRET` (or the
+  n8n fallback) it returns `503`, and every request must carry a valid
+  HMAC-SHA256 signature over the raw body.
+- Set `ALLOW_IN_MEMORY_FALLBACK=0`, `ALLOW_DEV_ENDPOINTS=0`,
+  `DASHBOARD_PASSWORD` and `CRM_WEBHOOK_SECRET` in production.
 
 ---
 
@@ -381,7 +468,8 @@ share the dashboard credentials; in CI set `DASHBOARD_USER` /
 src/app/                     routes, layout, global styles
 src/components/funnel/       Funnel FSM, step cards, forms, progress, result
 src/lib/funnel/              graph.json + engine + types
-src/lib/leads/               Zod schemas, service, store, automation, consent
+src/lib/leads/               Zod schemas, service, store, automation, consent,
+                             qualifier rubric, CRM disposition/offline CAPI
 src/lib/telemetry/           browser Pixel client + server telemetry service
 src/lib/meta/                normalization/SHA-256 + CAPI client
 src/lib/http/                backoff retry + request context helpers

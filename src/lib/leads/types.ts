@@ -1,4 +1,14 @@
 import type { LeadSubmission } from './schema';
+import { qualifyLead, type QualificationReasonCode, type QualificationTier } from './qualifier';
+
+export const DISPOSITIONS = ['consult_scheduled', 'retained', 'disqualified'] as const;
+export type DispositionStatus = (typeof DISPOSITIONS)[number];
+
+export const DISPOSITION_LABELS: Record<DispositionStatus, string> = {
+  consult_scheduled: 'Consult scheduled',
+  retained: 'Retained',
+  disqualified: 'Disqualified',
+};
 
 export interface RequestContext {
   ip: string;
@@ -42,6 +52,37 @@ export interface LeadRow {
   lead_event_id: string;
   status: 'new' | 'synced' | 'failed';
   submitted_at: string;
+  qualification_tier: QualificationTier | null;
+  qualification_score: number | null;
+  qualification_reasons: QualificationReasonCode[];
+  disposition: DispositionStatus | null;
+  contract_value: number | null;
+  disposition_updated_at: string | null;
+  offline_event_id: string | null;
+}
+
+export interface StoredLead {
+  id: string;
+  row: LeadRow;
+}
+
+export interface LeadIdentifier {
+  leadId?: string;
+  submissionId?: string;
+}
+
+export interface SaveDispositionInput {
+  leadId?: string;
+  submissionId?: string;
+  disposition: DispositionStatus;
+  contractValue: number | null;
+  offlineEventId: string | null;
+}
+
+export interface SaveDispositionResult {
+  lead: StoredLead;
+  previousDisposition: DispositionStatus | null;
+  changed: boolean;
 }
 
 export interface ConsentRow {
@@ -64,6 +105,8 @@ export interface DeadLetterInput {
 
 export interface LeadStore {
   saveLead(row: LeadRow, consent: ConsentRow): Promise<{ leadId: string; duplicate: boolean }>;
+  getLead(identifier: LeadIdentifier): Promise<StoredLead | null>;
+  saveDisposition(input: SaveDispositionInput): Promise<SaveDispositionResult | null>;
   logEvent(event: {
     eventId: string;
     eventName: string;
@@ -83,6 +126,7 @@ const yes = (value: string | undefined) => {
 /** Maps funnel step answers onto structured DB columns for reporting/CRM sync. */
 export function buildLeadRow(submission: LeadSubmission, phoneE164: string): LeadRow {
   const a = submission.answers;
+  const qualification = qualifyLead(a);
   return {
     submission_id: submission.submissionId,
     session_id: submission.sessionId,
@@ -119,6 +163,13 @@ export function buildLeadRow(submission: LeadSubmission, phoneE164: string): Lea
     lead_event_id: submission.eventId,
     status: 'new',
     submitted_at: new Date().toISOString(),
+    qualification_tier: qualification.tier,
+    qualification_score: qualification.score,
+    qualification_reasons: qualification.reasons,
+    disposition: null,
+    contract_value: null,
+    disposition_updated_at: null,
+    offline_event_id: null,
   };
 }
 
@@ -137,6 +188,9 @@ export function buildAutomationPayload(row: LeadRow, leadId: string) {
       phone: row.phone_e164,
     },
     qualification: {
+      tier: row.qualification_tier,
+      score: row.qualification_score,
+      reasons: row.qualification_reasons,
       receiving_benefits: row.receiving_benefits,
       hours_per_week: row.hours_per_week,
       years_employed: row.years_employed,
@@ -152,6 +206,12 @@ export function buildAutomationPayload(row: LeadRow, leadId: string) {
       hearing_status: row.hearing_status,
       waiting_period: row.waiting_period,
       denial_age: row.denial_age,
+    },
+    disposition: {
+      status: row.disposition,
+      contract_value: row.contract_value,
+      updated_at: row.disposition_updated_at,
+      offline_event_id: row.offline_event_id,
     },
     demographics: {
       gender: row.gender,

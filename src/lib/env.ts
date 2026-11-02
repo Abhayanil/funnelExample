@@ -23,6 +23,10 @@ export const env = {
   n8nWebhookUrl: process.env.N8N_WEBHOOK_URL ?? '',
   n8nWebhookSecret: process.env.N8N_WEBHOOK_SECRET ?? '',
 
+  // CRM disposition webhook. For the POC the n8n secret is an accepted
+  // fallback so a single shared secret can sign both integrations.
+  crmWebhookSecret: process.env.CRM_WEBHOOK_SECRET ?? process.env.N8N_WEBHOOK_SECRET ?? '',
+
   alertWebhookUrl: process.env.ALERT_WEBHOOK_URL ?? '',
 
   retry: {

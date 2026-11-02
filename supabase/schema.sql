@@ -30,6 +30,14 @@ begin
   if not exists (select 1 from pg_type where typname = 'dead_letter_source') then
     create type public.dead_letter_source as enum ('meta_capi', 'n8n_webhook', 'supabase', 'unknown');
   end if;
+
+  if not exists (select 1 from pg_type where typname = 'lead_qualification_tier') then
+    create type public.lead_qualification_tier as enum ('qualified', 'borderline', 'disqualified');
+  end if;
+
+  if not exists (select 1 from pg_type where typname = 'lead_disposition') then
+    create type public.lead_disposition as enum ('consult_scheduled', 'retained', 'disqualified');
+  end if;
 end
 $$;
 
@@ -74,6 +82,15 @@ create table if not exists public.leads (
   age_range             text,
   marital_status        text,
 
+  -- deterministic qualification + CRM disposition feedback
+  qualification_tier    public.lead_qualification_tier,
+  qualification_score   integer,
+  qualification_reasons text[] not null default '{}'::text[],
+  disposition           public.lead_disposition,
+  contract_value        numeric(12, 2),
+  disposition_updated_at timestamptz,
+  offline_event_id      uuid,
+
   -- attribution / telemetry
   attribution           jsonb not null default '{}'::jsonb,
   meta                  jsonb not null default '{}'::jsonb,
@@ -85,13 +102,57 @@ create table if not exists public.leads (
   updated_at            timestamptz not null default now(),
 
   constraint leads_email_shape check (position('@' in email) > 1),
-  constraint leads_phone_shape check (phone_e164 ~ '^\+[1-9][0-9]{7,14}$')
+  constraint leads_phone_shape check (phone_e164 ~ '^\+[1-9][0-9]{7,14}$'),
+  constraint leads_qualification_score_range
+    check (qualification_score is null or qualification_score between 0 and 100),
+  constraint leads_contract_value_nonnegative
+    check (contract_value is null or contract_value >= 0)
 );
 
 comment on table public.leads is
   'Qualified intake submissions. `submission_id` is the client-generated idempotency key; `lead_event_id` is the Meta event id shared by Pixel and CAPI.';
 comment on column public.leads.answers is
   'Raw step_id -> answer map from the funnel graph; kept so new questions never require a migration.';
+comment on column public.leads.qualification_tier is
+  'Deterministic SSA-style tier from src/lib/leads/qualifier.ts.';
+comment on column public.leads.qualification_reasons is
+  'Reason codes explaining the tier; labels live in QUALIFICATION_REASON_LABELS.';
+comment on column public.leads.disposition is
+  'Latest CRM outcome from the signed /api/webhooks/crm-disposition endpoint.';
+
+-- Existing deployments: add the new columns without dropping the table.
+alter table public.leads
+  add column if not exists qualification_tier public.lead_qualification_tier;
+alter table public.leads
+  add column if not exists qualification_score integer;
+alter table public.leads
+  add column if not exists qualification_reasons text[] not null default '{}'::text[];
+alter table public.leads
+  add column if not exists disposition public.lead_disposition;
+alter table public.leads
+  add column if not exists contract_value numeric(12, 2);
+alter table public.leads
+  add column if not exists disposition_updated_at timestamptz;
+alter table public.leads
+  add column if not exists offline_event_id uuid;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint where conname = 'leads_qualification_score_range'
+  ) then
+    alter table public.leads add constraint leads_qualification_score_range
+      check (qualification_score is null or qualification_score between 0 and 100);
+  end if;
+
+  if not exists (
+    select 1 from pg_constraint where conname = 'leads_contract_value_nonnegative'
+  ) then
+    alter table public.leads add constraint leads_contract_value_nonnegative
+      check (contract_value is null or contract_value >= 0);
+  end if;
+end
+$$;
 
 create index if not exists leads_email_idx on public.leads (lower(email));
 create index if not exists leads_phone_idx on public.leads (phone_e164);
@@ -99,6 +160,8 @@ create index if not exists leads_submitted_at_idx on public.leads (submitted_at 
 create index if not exists leads_status_idx on public.leads (status);
 create index if not exists leads_session_idx on public.leads (session_id);
 create index if not exists leads_lead_event_idx on public.leads (lead_event_id);
+create index if not exists leads_qualification_idx on public.leads (qualification_tier);
+create index if not exists leads_disposition_idx on public.leads (disposition);
 
 -- ----------------------------------------------------------------------------
 -- lead_tcpa_consent: append-only TCPA audit log
@@ -213,6 +276,11 @@ as $$
 declare
   v_lead_id uuid;
   v_consent jsonb := coalesce(payload -> 'consent', '{}'::jsonb);
+  v_reasons text[] := array(
+    select jsonb_array_elements_text(
+      coalesce(payload -> 'qualification_reasons', '[]'::jsonb)
+    )
+  );
 begin
   insert into public.leads (
     submission_id, session_id, funnel_version,
@@ -223,6 +291,7 @@ begin
     pending_application, attorney_status, attorney_firm, application_denied,
     claim_stage, reconsideration_status, denial_age, hearing_status,
     hearing_month, waiting_period, gender, age_range, marital_status,
+    qualification_tier, qualification_score, qualification_reasons,
     attribution, meta, lead_event_id, status, submitted_at
   )
   values (
@@ -256,6 +325,9 @@ begin
     payload ->> 'gender',
     payload ->> 'age_range',
     payload ->> 'marital_status',
+    nullif(payload ->> 'qualification_tier', '')::public.lead_qualification_tier,
+    nullif(payload ->> 'qualification_score', '')::integer,
+    v_reasons,
     coalesce(payload -> 'attribution', '{}'::jsonb),
     coalesce(payload -> 'meta', '{}'::jsonb),
     (payload ->> 'lead_event_id')::uuid,
@@ -271,6 +343,19 @@ begin
     select id into v_lead_id
     from public.leads
     where submission_id = (payload ->> 'submission_id')::uuid;
+
+    -- Backfill qualification for rows captured before the rubric existed. A
+    -- replay of the original submission is the cheapest way to grade them.
+    if v_lead_id is not null and payload ->> 'qualification_tier' is not null then
+      update public.leads
+         set qualification_tier =
+               nullif(payload ->> 'qualification_tier', '')::public.lead_qualification_tier,
+             qualification_score =
+               nullif(payload ->> 'qualification_score', '')::integer,
+             qualification_reasons = v_reasons
+       where id = v_lead_id
+         and qualification_tier is null;
+    end if;
 
     if v_lead_id is not null and payload ->> 'status' = 'failed' then
       update public.leads
@@ -359,6 +444,74 @@ revoke all on function public.mark_lead_synced(uuid) from public, anon, authenti
 grant execute on function public.mark_lead_synced(uuid) to service_role;
 
 -- ----------------------------------------------------------------------------
+-- apply_crm_disposition(payload jsonb)
+--   Idempotently records the latest CRM outcome and the deterministic offline
+--   Meta event id. Returns the previous disposition so the API can report
+--   whether the state actually changed.
+-- ----------------------------------------------------------------------------
+
+create or replace function public.apply_crm_disposition(payload jsonb)
+returns table (
+  lead_id uuid,
+  submission_id uuid,
+  disposition text,
+  previous_disposition text,
+  contract_value numeric,
+  offline_event_id uuid,
+  changed boolean
+)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_lead public.leads%rowtype;
+  v_disposition public.lead_disposition :=
+    (payload ->> 'disposition')::public.lead_disposition;
+  v_contract numeric := nullif(payload ->> 'contract_value', '')::numeric;
+  v_event uuid := nullif(payload ->> 'offline_event_id', '')::uuid;
+  v_previous public.lead_disposition;
+begin
+  select l.* into v_lead
+  from public.leads l
+  where (
+      nullif(payload ->> 'lead_id', '') is not null
+      and l.id = (payload ->> 'lead_id')::uuid
+    )
+    or (
+      nullif(payload ->> 'submission_id', '') is not null
+      and l.submission_id = (payload ->> 'submission_id')::uuid
+    )
+  limit 1;
+
+  if not found then
+    return;
+  end if;
+
+  v_previous := v_lead.disposition;
+
+  update public.leads
+     set disposition = v_disposition,
+         contract_value = v_contract,
+         disposition_updated_at = now(),
+         offline_event_id = v_event
+   where id = v_lead.id;
+
+  return query
+    select v_lead.id,
+           v_lead.submission_id,
+           v_disposition::text,
+           v_previous::text,
+           v_contract,
+           v_event,
+           (v_previous is distinct from v_disposition);
+end;
+$$;
+
+revoke all on function public.apply_crm_disposition(jsonb) from public, anon, authenticated;
+grant execute on function public.apply_crm_disposition(jsonb) to service_role;
+
+-- ----------------------------------------------------------------------------
 -- Row Level Security
 -- ----------------------------------------------------------------------------
 
@@ -414,13 +567,50 @@ from public.dead_letter_queue
 where resolved = false
 order by created_at desc;
 
-create or replace view public.funnel_daily_stats as
+drop view if exists public.funnel_daily_stats;
+create view public.funnel_daily_stats as
 select
   date_trunc('day', submitted_at) as day,
   status,
   count(*) as leads,
   count(*) filter (where application_denied) as denied_claims,
-  count(*) filter (where attorney_status = 'YES') as represented
+  count(*) filter (where attorney_status = 'YES') as represented,
+  count(*) filter (where qualification_tier = 'qualified') as qualified_leads,
+  count(*) filter (where qualification_tier = 'borderline') as borderline_leads,
+  count(*) filter (where qualification_tier = 'disqualified') as disqualified_leads,
+  round(
+    count(*) filter (where qualification_tier = 'qualified')::numeric
+      / nullif(count(*), 0),
+    4
+  ) as qualified_rate
 from public.leads
 group by 1, 2
 order by 1 desc;
+
+drop view if exists public.funnel_quality_by_campaign;
+create view public.funnel_quality_by_campaign as
+select
+  coalesce(nullif(attribution -> 'utm' ->> 'utm_source', ''), 'direct') as utm_source,
+  coalesce(nullif(attribution -> 'utm' ->> 'utm_campaign', ''), '(none)') as utm_campaign,
+  count(*) as leads,
+  count(*) filter (where qualification_tier = 'qualified') as qualified,
+  count(*) filter (where qualification_tier = 'borderline') as borderline,
+  count(*) filter (where qualification_tier = 'disqualified') as disqualified,
+  round(
+    count(*) filter (where qualification_tier = 'qualified')::numeric
+      / nullif(count(*), 0),
+    4
+  ) as qualified_rate
+from public.leads
+group by 1, 2
+order by leads desc;
+
+drop view if exists public.funnel_disqualification_reasons;
+create view public.funnel_disqualification_reasons as
+select
+  reason,
+  count(*) as leads
+from public.leads, unnest(qualification_reasons) as reason
+where qualification_tier = 'disqualified'
+group by 1
+order by leads desc;

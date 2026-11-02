@@ -508,6 +508,49 @@
   color: #b42318;
 }
 
+.chipQualified,
+.chipRetained {
+  background: #e7f8ef;
+  color: #05734a;
+}
+
+.chipBorderline {
+  background: #fff8e6;
+  color: #92400e;
+}
+
+.chipDisqualified {
+  background: #fff1f0;
+  color: #b42318;
+}
+
+.chipConsult {
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.chipUnset {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.qualitySummary {
+  display: grid;
+  gap: 12px;
+}
+
+.qualityFillQualified {
+  background: linear-gradient(90deg, #34d399, #059669);
+}
+
+.qualityFillBorderline {
+  background: linear-gradient(90deg, #fbbf24, #d97706);
+}
+
+.qualityFillDisqualified {
+  background: linear-gradient(90deg, #f87171, #dc2626);
+}
+
 /* ---------- answers ---------- */
 
 .answersGrid {

@@ -8,7 +8,7 @@
     "start": "next start -p 3100",
     "typecheck": "tsc --noEmit",
     "test": "playwright test",
-    "test:e2e": "playwright test tests/funnel.spec.ts tests/telemetry.spec.ts tests/dashboard.spec.ts",
+    "test:e2e": "playwright test tests/funnel.spec.ts tests/telemetry.spec.ts tests/qualifier.spec.ts tests/crm-disposition.spec.ts tests/dashboard.spec.ts",
     "crawl": "node scripts/crawl_funnel.js",
     "graph:build": "node scripts/build-funnel-graph.js",
     "map:extract": "node scripts/extract_definition.js",

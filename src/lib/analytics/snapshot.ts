@@ -1,6 +1,16 @@
 import { env } from '@/lib/env';
 import { getStep, graph } from '@/lib/funnel/engine';
+import {
+  QUALIFICATION_REASON_LABELS,
+  QUALIFICATION_VALUES,
+  QUALIFICATION_TIERS,
+  qualifyLead,
+  type QualificationReasonCode,
+  type QualificationResult,
+  type QualificationTier,
+} from '@/lib/leads/qualifier';
 import { getSupabaseAdmin, memoryLeadStore } from '@/lib/leads/store';
+import { DISPOSITIONS, type DispositionStatus } from '@/lib/leads/types';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MAX_STEP_SECONDS = 30 * 60;
@@ -22,6 +32,10 @@ export interface AnalyticsLead {
     referrer?: string;
     landingUrl?: string;
   };
+  qualification: QualificationResult;
+  disposition: DispositionStatus | null;
+  contractValue: number | null;
+  offlineEventId: string | null;
 }
 
 export interface AnalyticsEvent {
@@ -58,6 +72,27 @@ export interface AnalyticsSnapshot {
     total: number;
     options: Array<{ label: string; count: number; share: number }>;
   }>;
+  quality: {
+    qualified: number;
+    borderline: number;
+    disqualified: number;
+    qualifiedRate: number;
+    reasons: Array<{
+      code: QualificationReasonCode;
+      label: string;
+      count: number;
+      share: number;
+    }>;
+    campaigns: Array<{
+      source: string;
+      campaign: string;
+      leads: number;
+      qualified: number;
+      borderline: number;
+      disqualified: number;
+      qualifiedRate: number;
+    }>;
+  };
   sources: Array<{ source: string; leads: number; share: number }>;
   statuses: Array<{ status: string; count: number }>;
   recentLeads: Array<{
@@ -70,6 +105,11 @@ export interface AnalyticsSnapshot {
     maritalStatus: string | null;
     attorneyStatus: string | null;
     status: string;
+    qualificationTier: QualificationTier;
+    qualificationScore: number;
+    qualificationReasons: QualificationReasonCode[];
+    disposition: DispositionStatus | null;
+    contractValue: number | null;
   }>;
 }
 
@@ -84,6 +124,12 @@ interface SupabaseLeadRow {
   answers: Record<string, string> | null;
   status: string | null;
   attribution: AnalyticsLead['attribution'] | null;
+  qualification_tier: string | null;
+  qualification_score: number | null;
+  qualification_reasons: string[] | null;
+  disposition: string | null;
+  contract_value: number | string | null;
+  offline_event_id: string | null;
 }
 
 interface SupabaseEventRow {
@@ -109,6 +155,49 @@ function parseAttribution(value: unknown): AnalyticsLead['attribution'] {
     utm: asUtm(record.utm),
     referrer: typeof record.referrer === 'string' ? record.referrer : undefined,
     landingUrl: typeof record.landingUrl === 'string' ? record.landingUrl : undefined,
+  };
+}
+
+function isQualificationTier(value: unknown): value is QualificationTier {
+  return typeof value === 'string' && (QUALIFICATION_TIERS as readonly string[]).includes(value);
+}
+
+function isDisposition(value: unknown): value is DispositionStatus {
+  return typeof value === 'string' && (DISPOSITIONS as readonly string[]).includes(value);
+}
+
+function parseContractValue(value: unknown): number | null {
+  if (value === null || value === undefined || value === '') return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+/**
+ * Rows captured before the rubric existed have no stored tier, so they are
+ * graded from their answers at read time. New rows always carry the stored
+ * result, which keeps the dashboard consistent with what was sent to Meta.
+ */
+function resolveQualification(
+  answers: Record<string, string>,
+  tier: unknown,
+  score: unknown,
+  reasons: unknown
+): QualificationResult {
+  const computed = qualifyLead(answers);
+  if (!isQualificationTier(tier)) return computed;
+
+  const validReasons = Array.isArray(reasons)
+    ? reasons.filter(
+        (reason): reason is QualificationReasonCode =>
+          typeof reason === 'string' && reason in QUALIFICATION_REASON_LABELS
+      )
+    : [];
+
+  return {
+    tier,
+    score: typeof score === 'number' && Number.isFinite(score) ? score : computed.score,
+    reasons: validReasons.length > 0 ? validReasons : computed.reasons,
+    value: QUALIFICATION_VALUES[tier],
   };
 }
 
@@ -146,6 +235,15 @@ async function loadRange(rangeDays: RangeDays): Promise<{
           answers: lead.row.answers,
           status: lead.row.status,
           attribution: parseAttribution(lead.row.attribution),
+          qualification: resolveQualification(
+            lead.row.answers,
+            lead.row.qualification_tier,
+            lead.row.qualification_score,
+            lead.row.qualification_reasons
+          ),
+          disposition: lead.row.disposition ?? null,
+          contractValue: lead.row.contract_value ?? null,
+          offlineEventId: lead.row.offline_event_id ?? null,
         })),
       events: snapshot.events
         .filter(event => new Date(event.createdAt) >= since)
@@ -163,7 +261,7 @@ async function loadRange(rangeDays: RangeDays): Promise<{
     client
       .from('leads')
       .select(
-        'id, session_id, submitted_at, first_name, last_name, email, phone_e164, answers, status, attribution'
+        'id, session_id, submitted_at, first_name, last_name, email, phone_e164, answers, status, attribution, qualification_tier, qualification_score, qualification_reasons, disposition, contract_value, offline_event_id'
       )
       .gte('submitted_at', since.toISOString())
       .order('submitted_at', { ascending: false })
@@ -198,6 +296,15 @@ async function loadRange(rangeDays: RangeDays): Promise<{
       answers: row.answers ?? {},
       status: row.status ?? 'new',
       attribution: parseAttribution(row.attribution),
+      qualification: resolveQualification(
+        row.answers ?? {},
+        row.qualification_tier,
+        row.qualification_score,
+        row.qualification_reasons
+      ),
+      disposition: isDisposition(row.disposition) ? row.disposition : null,
+      contractValue: parseContractValue(row.contract_value),
+      offlineEventId: row.offline_event_id ?? null,
     })),
     events: eventRows.map(row => ({
       eventId: row.event_id,
@@ -429,10 +536,82 @@ export async function getAnalyticsSnapshot(rangeDays: RangeDays): Promise<Analyt
     statusCounts.set(lead.status, (statusCounts.get(lead.status) ?? 0) + 1);
   }
 
+  const tierCounts: Record<QualificationTier, number> = {
+    qualified: 0,
+    borderline: 0,
+    disqualified: 0,
+  };
+  const reasonCounts = new Map<QualificationReasonCode, number>();
+  const campaignMap = new Map<
+    string,
+    {
+      source: string;
+      campaign: string;
+      leads: number;
+      qualified: number;
+      borderline: number;
+      disqualified: number;
+    }
+  >();
+
+  for (const lead of leads) {
+    tierCounts[lead.qualification.tier] += 1;
+
+    if (lead.qualification.tier === 'disqualified') {
+      for (const reason of lead.qualification.reasons) {
+        reasonCounts.set(reason, (reasonCounts.get(reason) ?? 0) + 1);
+      }
+    }
+
+    const source =
+      lead.attribution.utm?.utm_source?.trim().toLowerCase() || sourceOf(lead);
+    const campaign = lead.attribution.utm?.utm_campaign?.trim() || '(none)';
+    const key = `${source}\u0000${campaign}`;
+    const entry =
+      campaignMap.get(key) ?? {
+        source,
+        campaign,
+        leads: 0,
+        qualified: 0,
+        borderline: 0,
+        disqualified: 0,
+      };
+    entry.leads += 1;
+    entry[lead.qualification.tier] += 1;
+    campaignMap.set(key, entry);
+  }
+
+  const disqualifiedTotal = tierCounts.disqualified;
+
   return {
     rangeDays,
     generatedAt: new Date().toISOString(),
     dataSource,
+    quality: {
+      qualified: tierCounts.qualified,
+      borderline: tierCounts.borderline,
+      disqualified: tierCounts.disqualified,
+      qualifiedRate: leads.length > 0 ? tierCounts.qualified / leads.length : 0,
+      reasons: [...reasonCounts.entries()]
+        .map(([code, count]) => ({
+          code,
+          label: QUALIFICATION_REASON_LABELS[code],
+          count,
+          share: disqualifiedTotal > 0 ? count / disqualifiedTotal : 0,
+        }))
+        .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label)),
+      campaigns: [...campaignMap.values()]
+        .map(entry => ({
+          ...entry,
+          qualifiedRate: entry.leads > 0 ? entry.qualified / entry.leads : 0,
+        }))
+        .sort(
+          (a, b) =>
+            b.leads - a.leads ||
+            a.source.localeCompare(b.source) ||
+            a.campaign.localeCompare(b.campaign)
+        ),
+    },
     totals: {
       leads: leads.length,
       sessions: totalSessions,
@@ -464,6 +643,11 @@ export async function getAnalyticsSnapshot(rangeDays: RangeDays): Promise<Analyt
       maritalStatus: lead.answers.page_8w2qbu ?? null,
       attorneyStatus: lead.answers.attorney ?? null,
       status: lead.status,
+      qualificationTier: lead.qualification.tier,
+      qualificationScore: lead.qualification.score,
+      qualificationReasons: lead.qualification.reasons,
+      disposition: lead.disposition,
+      contractValue: lead.contractValue,
     })),
   };
 }

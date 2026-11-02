@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { getAnalyticsSnapshot, type AnalyticsSnapshot, type RangeDays } from '@/lib/analytics/snapshot';
+import { QUALIFICATION_TIER_LABELS, type QualificationTier } from '@/lib/leads/qualifier';
+import { DISPOSITION_LABELS, type DispositionStatus } from '@/lib/leads/types';
 import styles from './dashboard.module.css';
 
 export const dynamic = 'force-dynamic';
@@ -141,8 +143,59 @@ function StatusChip({ status }: { status: string }) {
   return <span className={`${styles.chip} ${className}`}>{status}</span>;
 }
 
+function formatCurrency(value: number | null): string {
+  if (value === null) return '—';
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
+function qualityFillClass(tier: QualificationTier): string {
+  if (tier === 'qualified') return styles.qualityFillQualified;
+  if (tier === 'borderline') return styles.qualityFillBorderline;
+  return styles.qualityFillDisqualified;
+}
+
+function QualityChip({ tier, score }: { tier: QualificationTier; score: number }) {
+  const className =
+    tier === 'qualified'
+      ? styles.chipQualified
+      : tier === 'borderline'
+        ? styles.chipBorderline
+        : styles.chipDisqualified;
+  return (
+    <span className={`${styles.chip} ${className}`}>
+      {QUALIFICATION_TIER_LABELS[tier]} · {score}
+    </span>
+  );
+}
+
+function DispositionChip({ disposition }: { disposition: DispositionStatus | null }) {
+  if (!disposition) {
+    return <span className={`${styles.chip} ${styles.chipUnset}`}>Not synced</span>;
+  }
+
+  const className =
+    disposition === 'consult_scheduled'
+      ? styles.chipConsult
+      : disposition === 'retained'
+        ? styles.chipRetained
+        : styles.chipDisqualified;
+
+  return (
+    <span className={`${styles.chip} ${className}`}>{DISPOSITION_LABELS[disposition]}</span>
+  );
+}
+
 function DashboardBody({ snapshot }: { snapshot: AnalyticsSnapshot }) {
   const topAnswers = snapshot.answers.slice(0, MAX_ANSWER_CARDS);
+  const tierCounts: Array<{ tier: QualificationTier; count: number }> = [
+    { tier: 'qualified', count: snapshot.quality.qualified },
+    { tier: 'borderline', count: snapshot.quality.borderline },
+    { tier: 'disqualified', count: snapshot.quality.disqualified },
+  ];
 
   return (
     <>
@@ -171,6 +224,18 @@ function DashboardBody({ snapshot }: { snapshot: AnalyticsSnapshot }) {
           value={formatPercent(snapshot.totals.conversionRate)}
           hint="Leads ÷ sessions in range"
           testId="kpi-conversion"
+        />
+        <Kpi
+          label="Qualified leads"
+          value={formatCount(snapshot.quality.qualified)}
+          hint="Passed the SSA-style rubric"
+          testId="kpi-qualified"
+        />
+        <Kpi
+          label="Qualified rate"
+          value={formatPercent(snapshot.quality.qualifiedRate)}
+          hint="Qualified ÷ captured leads"
+          testId="kpi-qualified-rate"
         />
         <Kpi
           label="Median time to lead"
@@ -226,6 +291,138 @@ function DashboardBody({ snapshot }: { snapshot: AnalyticsSnapshot }) {
           )}
         </Panel>
       </div>
+
+      <div className={styles.grid}>
+        <Panel
+          title="Lead quality"
+          hint="Deterministic SSA-style rubric: SGA hours, work history, medical evidence, duration, age and representation."
+          testId="quality-panel"
+        >
+          {snapshot.totals.leads === 0 ? (
+            <Empty>No leads to grade in this range yet.</Empty>
+          ) : (
+            <div className={styles.qualitySummary}>
+              {tierCounts.map(entry => {
+                const share =
+                  snapshot.totals.leads > 0 ? entry.count / snapshot.totals.leads : 0;
+                return (
+                  <div key={entry.tier} className={styles.sourceRow}>
+                    <span className={styles.sourceName}>
+                      {QUALIFICATION_TIER_LABELS[entry.tier]}
+                    </span>
+                    <span className={styles.sourceBar} aria-hidden="true">
+                      <span
+                        className={`${styles.sourceFill} ${qualityFillClass(entry.tier)}`}
+                        style={{ width: `${Math.max(share * 100, entry.count > 0 ? 2 : 0)}%` }}
+                      />
+                    </span>
+                    <span className={styles.sourceCount}>
+                      {formatCount(entry.count)} · {formatPercent(share)}
+                    </span>
+                  </div>
+                );
+              })}
+              <p className={styles.panelHint}>
+                Qualified rate is {formatPercent(snapshot.quality.qualifiedRate)} across{' '}
+                {formatCount(snapshot.totals.leads)} lead
+                {snapshot.totals.leads === 1 ? '' : 's'}.
+              </p>
+            </div>
+          )}
+        </Panel>
+
+        <Panel
+          title="Disqualification reasons"
+          hint="Every reason code attached to a disqualified lead. One lead can have several signals."
+          testId="reasons-panel"
+        >
+          {snapshot.quality.reasons.length === 0 ? (
+            <Empty>No disqualified leads in this range.</Empty>
+          ) : (
+            <div className={styles.tableWrap}>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th scope="col">Reason</th>
+                    <th scope="col">Leads</th>
+                    <th scope="col">Share</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {snapshot.quality.reasons.map(reason => (
+                    <tr key={reason.code}>
+                      <td>
+                        <span className={styles.stepQuestion}>{reason.label}</span>
+                        <code className={styles.stepId}>{reason.code}</code>
+                      </td>
+                      <td className={styles.numeric}>{formatCount(reason.count)}</td>
+                      <td className={styles.numeric}>{formatPercent(reason.share)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Panel>
+      </div>
+
+      <Panel
+        title="Campaign quality"
+        hint="Lead volume and qualified rate grouped by utm_source / utm_campaign."
+        testId="campaign-panel"
+      >
+        {snapshot.quality.campaigns.length === 0 ? (
+          <Empty>No campaign attribution data yet.</Empty>
+        ) : (
+          <div className={styles.tableWrap}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th scope="col">Source</th>
+                  <th scope="col">Campaign</th>
+                  <th scope="col">Leads</th>
+                  <th scope="col">Qualified</th>
+                  <th scope="col">Quality mix</th>
+                  <th scope="col">Qualified rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                {snapshot.quality.campaigns.map(campaign => (
+                  <tr key={`${campaign.source}\u0000${campaign.campaign}`}>
+                    <td>
+                      <span className={styles.sourceName}>{campaign.source}</span>
+                    </td>
+                    <td>{campaign.campaign}</td>
+                    <td className={styles.numeric}>{formatCount(campaign.leads)}</td>
+                    <td className={styles.numeric}>{formatCount(campaign.qualified)}</td>
+                    <td className={styles.numeric}>
+                      {formatCount(campaign.borderline)} b · {formatCount(campaign.disqualified)} d
+                    </td>
+                    <td>
+                      <span className={styles.reachCell}>
+                        <span className={styles.reachBar} aria-hidden="true">
+                          <span
+                            className={styles.reachFill}
+                            style={{
+                              width: `${Math.max(
+                                campaign.qualifiedRate * 100,
+                                campaign.qualified > 0 ? 2 : 0
+                              )}%`,
+                            }}
+                          />
+                        </span>
+                        <span className={styles.numeric}>
+                          {formatPercent(campaign.qualifiedRate)}
+                        </span>
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Panel>
 
       <Panel
         title="Step reach & timing"
@@ -334,7 +531,9 @@ function DashboardBody({ snapshot }: { snapshot: AnalyticsSnapshot }) {
                   <th scope="col">Lead</th>
                   <th scope="col">Contact</th>
                   <th scope="col">Profile</th>
+                  <th scope="col">Quality</th>
                   <th scope="col">Attorney</th>
+                  <th scope="col">Disposition</th>
                   <th scope="col">Status</th>
                   <th scope="col">Submitted</th>
                 </tr>
@@ -350,7 +549,27 @@ function DashboardBody({ snapshot }: { snapshot: AnalyticsSnapshot }) {
                     <td>
                       {[lead.ageRange, lead.maritalStatus].filter(Boolean).join(' · ') || '—'}
                     </td>
+                    <td>
+                      <QualityChip
+                        tier={lead.qualificationTier}
+                        score={lead.qualificationScore}
+                      />
+                      {lead.qualificationReasons.length > 0 && (
+                        <span className={styles.contactLine}>
+                          {lead.qualificationReasons.length} signal
+                          {lead.qualificationReasons.length === 1 ? '' : 's'}
+                        </span>
+                      )}
+                    </td>
                     <td>{lead.attorneyStatus ?? '—'}</td>
+                    <td>
+                      <DispositionChip disposition={lead.disposition} />
+                      {lead.contractValue !== null && (
+                        <span className={styles.contactLine}>
+                          {formatCurrency(lead.contractValue)}
+                        </span>
+                      )}
+                    </td>
                     <td>
                       <StatusChip status={lead.status} />
                     </td>

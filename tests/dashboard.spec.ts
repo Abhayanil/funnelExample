@@ -1,6 +1,6 @@
-import { randomUUID } from 'node:crypto';
+import { createHmac, randomUUID } from 'node:crypto';
 import { expect, request as apiRequest, test } from '@playwright/test';
-import { buildPayload } from './fixtures';
+import { buildDisqualifiedPayload, buildPayload, buildQualifiedPayload } from './fixtures';
 
 /**
  * The dashboard is gated by HTTP Basic auth (src/proxy.ts). These tests verify
@@ -14,6 +14,11 @@ import { buildPayload } from './fixtures';
 
 const USER = process.env.DASHBOARD_USER ?? 'admin';
 const PASSWORD = process.env.DASHBOARD_PASSWORD ?? '';
+const CRM_SECRET = process.env.CRM_WEBHOOK_SECRET ?? process.env.N8N_WEBHOOK_SECRET ?? '';
+
+function sign(raw: string): string {
+  return `sha256=${createHmac('sha256', CRM_SECRET).update(raw, 'utf8').digest('hex')}`;
+}
 
 test.describe('Dashboard auth boundary', () => {
   test.skip(!PASSWORD, 'DASHBOARD_PASSWORD is not configured');
@@ -98,6 +103,13 @@ test.describe('Analytics dashboard', () => {
     await expect(page.getByTestId('kpi-sessions')).toHaveText('1');
     await expect(page.getByTestId('kpi-conversion')).toHaveText('100%');
     await expect(page.getByTestId('kpi-events')).toHaveText('5');
+    await expect(page.getByTestId('kpi-qualified')).toHaveText('0');
+    await expect(page.getByTestId('kpi-qualified-rate')).toHaveText('0%');
+
+    // The common-plus fixture is borderline: 20 h/week and not expecting 12
+    // months out of work are risk signals, but neither is a hard stop.
+    await expect(page.getByTestId('quality-panel')).toContainText('Borderline');
+    await expect(page.getByTestId('reasons-panel')).toContainText('No disqualified leads');
 
     // InitiateCheckout counts as reaching `start`; the lead itself counts `contact`.
     const stepRows = page.locator('[data-testid="steps-panel"] tbody tr');
@@ -113,12 +125,77 @@ test.describe('Analytics dashboard', () => {
     await expect(recent).toContainText('Jordan Rivera');
     await expect(recent).toContainText('50-54');
     await expect(recent).toContainText('Single');
+    await expect(recent).toContainText('Borderline');
+    await expect(recent).toContainText('Not synced');
 
     // Contact details are masked in the UI; the full values never render.
     await expect(recent).toContainText('j******@example.com');
     await expect(recent).toContainText('••• ••• 4567');
     await expect(recent).not.toContainText('jordan.rivera@example.com');
     await expect(recent).not.toContainText('5551234567');
+  });
+
+  test('shows qualified rate, disqualification reasons, campaign quality and disposition', async ({
+    page,
+    request,
+  }) => {
+    test.skip(!CRM_SECRET, 'CRM_WEBHOOK_SECRET is not configured');
+
+    const qualifiedPayload = buildQualifiedPayload({
+      email: 'qualified@example.com',
+      utm: { utm_source: 'facebook', utm_campaign: 'ssd_50plus' },
+    });
+    const qualifiedResponse = await request.post('/api/leads', { data: qualifiedPayload });
+    expect(qualifiedResponse.status()).toBe(201);
+    const qualifiedLead = await qualifiedResponse.json();
+
+    const disqualifiedPayload = buildDisqualifiedPayload({
+      email: 'notqualified@example.com',
+      utm: { utm_source: 'google', utm_campaign: 'broad' },
+    });
+    const disqualifiedResponse = await request.post('/api/leads', {
+      data: disqualifiedPayload,
+    });
+    expect(disqualifiedResponse.status()).toBe(201);
+
+    const raw = JSON.stringify({
+      lead_id: qualifiedLead.leadId,
+      status: 'retained',
+      contract_value: 2500,
+    });
+    const disposition = await request.post('/api/webhooks/crm-disposition', {
+      data: raw,
+      headers: {
+        'content-type': 'application/json',
+        'x-lexhive-signature': sign(raw),
+      },
+    });
+    expect(disposition.status()).toBe(200);
+
+    await page.goto('/dashboard?range=7');
+
+    await expect(page.getByTestId('kpi-leads')).toHaveText('2');
+    await expect(page.getByTestId('kpi-qualified')).toHaveText('1');
+    await expect(page.getByTestId('kpi-qualified-rate')).toHaveText('50%');
+
+    await expect(page.getByTestId('quality-panel')).toContainText('Qualified');
+    await expect(page.getByTestId('quality-panel')).toContainText('Disqualified');
+
+    const reasons = page.getByTestId('reasons-panel');
+    await expect(reasons).toContainText('Working more than 20 hrs/week (SGA)');
+    await expect(reasons).toContainText('working_over_20_hours');
+
+    const campaign = page.getByTestId('campaign-panel');
+    await expect(campaign).toContainText('facebook');
+    await expect(campaign).toContainText('ssd_50plus');
+    await expect(campaign).toContainText('google');
+    await expect(campaign).toContainText('broad');
+
+    const recent = page.getByTestId('recent-panel');
+    await expect(recent).toContainText('Retained');
+    await expect(recent).toContainText('$2,500');
+    await expect(recent).toContainText('Qualified');
+    await expect(recent).toContainText('Disqualified');
   });
 
   test('supports the 30-day range tab', async ({ page }) => {

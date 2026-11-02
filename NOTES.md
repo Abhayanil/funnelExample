@@ -3,11 +3,11 @@
 ## Scope
 
 This proof of concept is the 26-step disability funnel plus a working Supabase lead
-pipeline and an internal analytics dashboard. n8n, Airtable and the Meta Business
-account are **not** configured for this stage. Their code paths remain in the
-repository, but every one of them is a no-op when its environment variables are
-unset, so the POC runs end-to-end without them and can be switched on later without
-a rewrite.
+pipeline, deterministic lead qualification, closed-loop CRM feedback and an
+internal analytics dashboard. n8n, Airtable and the Meta Business account are
+**not** configured for this stage. Their code paths remain in the repository, but
+every one of them is a no-op when its environment variables are unset, so the POC
+runs end-to-end without them and can be switched on later without a rewrite.
 
 ## Assumptions
 
