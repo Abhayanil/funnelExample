@@ -109,17 +109,6 @@ create table if not exists public.leads (
     check (contract_value is null or contract_value >= 0)
 );
 
-comment on table public.leads is
-  'Qualified intake submissions. `submission_id` is the client-generated idempotency key; `lead_event_id` is the Meta event id shared by Pixel and CAPI.';
-comment on column public.leads.answers is
-  'Raw step_id -> answer map from the funnel graph; kept so new questions never require a migration.';
-comment on column public.leads.qualification_tier is
-  'Deterministic SSA-style tier from src/lib/leads/qualifier.ts.';
-comment on column public.leads.qualification_reasons is
-  'Reason codes explaining the tier; labels live in QUALIFICATION_REASON_LABELS.';
-comment on column public.leads.disposition is
-  'Latest CRM outcome from the signed /api/webhooks/crm-disposition endpoint.';
-
 -- Existing deployments: add the new columns without dropping the table.
 alter table public.leads
   add column if not exists qualification_tier public.lead_qualification_tier;
@@ -135,6 +124,17 @@ alter table public.leads
   add column if not exists disposition_updated_at timestamptz;
 alter table public.leads
   add column if not exists offline_event_id uuid;
+
+comment on table public.leads is
+  'Qualified intake submissions. `submission_id` is the client-generated idempotency key; `lead_event_id` is the Meta event id shared by Pixel and CAPI.';
+comment on column public.leads.answers is
+  'Raw step_id -> answer map from the funnel graph; kept so new questions never require a migration.';
+comment on column public.leads.qualification_tier is
+  'Deterministic SSA-style tier from src/lib/leads/qualifier.ts.';
+comment on column public.leads.qualification_reasons is
+  'Reason codes explaining the tier; labels live in QUALIFICATION_REASON_LABELS.';
+comment on column public.leads.disposition is
+  'Latest CRM outcome from the signed /api/webhooks/crm-disposition endpoint.';
 
 do $$
 begin

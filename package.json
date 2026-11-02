@@ -13,19 +13,26 @@
     "graph:build": "node scripts/build-funnel-graph.js",
     "map:extract": "node scripts/extract_definition.js",
     "map:verify": "node scripts/reconcile.js",
-    "dlq:replay": "node scripts/dlq-replay.mjs"
+    "dlq:replay": "node scripts/dlq-replay.mjs",
+    "video:preview": "remotion preview src/remotion/index.ts",
+    "video:render": "remotion render src/remotion/index.ts LexHiveWalkthrough out/lexhive-demo.mp4"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@hookform/resolvers": "^7.0.1",
+    "@remotion/cli": "^4.0.540",
+    "@remotion/media": "^4.0.540",
+    "@remotion/player": "^4.0.540",
+    "@remotion/transitions": "^4.0.540",
     "@supabase/supabase-js": "^2.118.0",
     "framer-motion": "^14.9.0",
     "next": "^16.4.3",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-hook-form": "^7.91.0",
+    "remotion": "^4.0.540",
     "zod": "^4.6.7"
   },
   "devDependencies": {

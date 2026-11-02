@@ -27,3 +27,4 @@ next-env.d.ts
 # OS / editor
 .DS_Store
 .vercel
+models/
